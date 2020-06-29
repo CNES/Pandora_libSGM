@@ -1,0 +1,61 @@
+LIBSGM Copyright (c) 2020 Centre National d'Etudes Spatiales (CNES).
+
+This software is distributed under the Apache Software License (ASL) v2.0, see
+LICENSE file or http://www.apache.org/licenses/LICENSE-2.0 for details.
+
+LIBSGM depends on or includes source code from the following third-party
+software:
+
+Python: programming language that lets you work quickly and integrate systems more effectively.
+Copyright (c) 2001-2020 Python Software Foundation. All Rights reserved.
+Website: http://python.org/
+License: Python Software License.
+
+NumPy: The fundamental package for scientific computing with Python.
+Copyright (c) 2005-2020, NumPy Developers.
+Website: https://numpy.org/
+License: BSD 3 Clause.
+
+Cython: Writing C extensions for Python.
+Copyright : Cython contributors
+Website: https://cython.org/
+Licence: Apache v2.0.
+
+Setuptools: build system
+Copyright (C) 2016 Jason R Coombs <jaraco@jaraco.com>
+Website: https://setuptools.readthedocs.io/
+License: MIT.
+
+GNU C Library (libc6)
+Copyright (C) 2009 Free Software Foundation, Inc.
+Website: https://www.gnu.org/software/libc/
+License: GNU LGPL v2.1.
+
+C++ Standard Library (libstdc++)
+Copyright (C) 2009 Free Software Foundation, Inc.
+Website: https://gcc.gnu.org/wiki/Libstdc++
+License: GNU GPL v3.0 + GCC Runtime Library Exception v3.1
+
+C++ Runtime Library (libgcc)
+Copyright (C) 2009 Free Software Foundation, Inc.
+Website: https://gcc.gnu.org/onlinedocs/gccint/Libgcc.html
+License: GNU GPL v3.0 + GCC Runtime Library Exception v3.1
+
+OpenMP: specification for parallel programming
+Copyright (c) 1997-2018 OpenMP ARB Corporation
+Website: https://www.openmp.org/
+License: "GNU GPL v3.0 + GNU GCC Runtime Library Exception" (GCC) and "NCSA Open Source License" (Clang)
+
+Sphinx-doc: Tool to create documentation for Python projects
+Copyright (c) 2007-2019 by the Sphinx team
+Website: https://www.sphinx-doc.org/
+License: BSD 2 Clause.
+
+Googletest: Test framework for C++ codes
+Copyright (c) Copyright 2008, Google Inc.
+Website: https://github.com/google/googletest
+License: BSD 3 Clause.
+
+Copyright (c) 2011, Gael Varoquaux
+Website: http://gael-varoquaux.info/programming/cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html
+License: BSD 3 clause
