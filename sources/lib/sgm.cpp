@@ -369,7 +369,7 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
     /* -----------------------------*/
     /* --Diagonal from upper left-- */
     /* -----------------------------*/
-    uint8_t costAggr2 = pixelCost;
+    T costAggr2 = pixelCost;
     //Border check
     if (! (row-direction.drow<0 || row-direction.drow > (nb_rows -1) || col-direction.dcol < 0 || col-direction.dcol > (nb_cols-1) ) )
     {
