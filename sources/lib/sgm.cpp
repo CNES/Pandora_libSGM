@@ -430,13 +430,13 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
         if(pixelCost != invalid_value)
         {
             //Previous cost
-            const uint8_t tmp1 = buff3[disp+(col-direction.dcol)*nb_disps];
+            const T tmp1 = buff3[disp+(col-direction.dcol)*nb_disps];
             //Previous cost at disparity-1
-            const uint8_t tmp2 = (disp>0) ? buff3[disp-1+(col-direction.dcol)*nb_disps]+P1 : std::numeric_limits<T>::max();
+            const T tmp2 = (disp>0) ? buff3[disp-1+(col-direction.dcol)*nb_disps]+P1 : std::numeric_limits<T>::max();
             //Previous cost at disparity+1
-            const uint8_t tmp3 = (disp<nb_disps-1) ? buff3[disp+1+(col-direction.dcol)*nb_disps]+P1 : std::numeric_limits<T>::max();
+            const T tmp3 = (disp<nb_disps-1) ? buff3[disp+1+(col-direction.dcol)*nb_disps]+P1 : std::numeric_limits<T>::max();
             //Minimum cost at previous point
-            const uint8_t tmp4 = (*min_disp3)+P2;
+            const T tmp4 = (*min_disp3)+P2;
             //Minimum path cost
             costAggr3 += std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp3);
         }
@@ -473,13 +473,13 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
         if(pixelCost != invalid_value)
         {
             //Previous cost
-            const uint8_t tmp1 = buff4[disp];
+            const T tmp1 = buff4[disp];
             //Previous cost at disparity-1
-            const uint8_t tmp2 = (disp>0) ? *pixel_4+P1 : std::numeric_limits<T>::max();
+            const T tmp2 = (disp>0) ? *pixel_4+P1 : std::numeric_limits<T>::max();
             //Previous cost at disparity+1
-            const uint8_t tmp3 = (disp<nb_disps-1) ? buff4[disp+1]+P1 : std::numeric_limits<T>::max();
+            const T tmp3 = (disp<nb_disps-1) ? buff4[disp+1]+P1 : std::numeric_limits<T>::max();
             //Minimum cost at previous point
-            const uint8_t tmp4 = (*min_disp4)+P2;
+            const T tmp4 = (*min_disp4)+P2;
             //Minimum path cost
             costAggr4 += std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp4);
         }
