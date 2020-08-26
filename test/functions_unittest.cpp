@@ -175,132 +175,6 @@ TEST(sgmTest, TestMiddleValueOvercounting){
 	EXPECT_EQ(58,cvs.cost_volume[13]);
 }
 
-//Global Test of sgm function, input float cost volume: aggregation value from 8 directions on a middle point of cost volume
-//with invalid middle point and without over-counting correction
-
-TEST(sgmTestFloat, TestMiddleValueInvalid){
-
-    int nb_row,nb_col,nb_disp;
-	nb_row = 3;
-	nb_col = 3;
-	nb_disp = 3;
-	float P1, P2;
-	float invalid_value;
-	P1 = 8;
-	P2 = 32;
-	invalid_value = 57.0;
-
-	bool overcounting = false;
-	bool cost_paths = false;
-
-	CostVolumes cvs;
-	float cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
-
-	// method : constant
-	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
-	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
-    int penalties[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
-
-	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
-	//middle point must stay invalid, equal to invalid value
-	EXPECT_EQ(456.0,cvs.cost_volume[13]);
-}
-
-//with invalid middle point and with over-counting correction
-
-TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting){
-
-    int nb_row,nb_col,nb_disp;
-	nb_row = 3;
-	nb_col = 3;
-	nb_disp = 3;
-	float P1, P2;
-	float invalid_value;
-	P1 = 8;
-	P2 = 32;
-	invalid_value = 57.0;
-
-	bool overcounting = true;
-	bool cost_paths = false;
-
-	CostVolumes cvs;
-	float cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
-
-	// method : constant
-	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
-	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
-    int penalties[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
-
-	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
-	//middle point must stay invalid, equal to invalid value
-	EXPECT_EQ(57.0,cvs.cost_volume[13]);
-}
-
-//Global Test of sgm function, input float cost volume: aggregation value from 8 directions on a middle point of cost volume
-//with valid middle point and without over-counting correction
-
-TEST(sgmTestFloat, TestMiddleValue){
-
-    int nb_row,nb_col,nb_disp;
-	nb_row = 3;
-	nb_col = 3;
-	nb_disp = 3;
-	float P1, P2;
-	float invalid_value;
-	P1 = 8;
-	P2 = 32;
-	invalid_value = 57.0;
-
-	bool cost_paths = false;
-	bool overcounting = false;
-
-	CostVolumes cvs;
-	float cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
-
-	// method : constant
-	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
-	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
-    int penalties[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
-
-	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
-	EXPECT_EQ(142.0,cvs.cost_volume[13]);
-}
-
-//with valid middle point and with over-counting correction
-
-TEST(sgmTestFloat, TestMiddleValueOvercounting){
-
-    int nb_row,nb_col,nb_disp;
-	nb_row = 3;
-	nb_col = 3;
-	nb_disp = 3;
-	float P1, P2;
-	float invalid_value;
-	P1 = 8;
-	P2 = 32;
-	invalid_value = 57.0;
-	float alpha = 100;
-	float beta = 1;
-	float gamma = 2;
-	bool overcounting = true;
-	bool cost_paths = false;
-
-	CostVolumes cvs;
-	float cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
-
-	// method : constant
-	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
-	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
-    int penalties[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
-
-	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
-	EXPECT_EQ(58.0,cvs.cost_volume[13]);
-}
-
 // Test function aggregatedCostFromTopLeft0 
  
 // Test aggregation on cost Volume border
@@ -1313,6 +1187,183 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationAfterInvalidPoint) {
 	EXPECT_EQ(57,min_disp7);
 	EXPECT_EQ(15,costAggr);
 
+
+}
+
+//Global Test of sgm function, input float cost volume: aggregation value from 8 directions on a middle point of cost volume
+//with invalid middle point and without over-counting correction
+
+TEST(sgmTestFloat, TestMiddleValueInvalid){
+
+    int nb_row,nb_col,nb_disp;
+	nb_row = 3;
+	nb_col = 3;
+	nb_disp = 3;
+	float P1, P2, invalid_value;
+	P1 = 1.0;
+	P2 = 3.0;
+	invalid_value = 5.0;
+
+	bool overcounting = false;
+	bool cost_paths = false;
+
+	CostVolumes cvs;
+	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,5.0,5.0,5.0,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
+
+	// method : constant
+	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
+	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
+    int direction[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
+
+	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
+	//middle point must stay invalid, equal to invalid value
+	EXPECT_FLOAT_EQ(40.0,cvs.cost_volume[13]);
+}
+
+//Global Test of sgm function, input float cost volume: aggregation value from 8 directions on a middle point of cost volume
+//with invalid middle point and with over-counting correction
+
+TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting){
+
+    int nb_row,nb_col,nb_disp;
+	nb_row = 3;
+	nb_col = 3;
+	nb_disp = 3;
+	float P1, P2, invalid_value;
+	P1 = 1.0;
+	P2 = 3.0;
+	invalid_value = 5.0;
+
+	bool overcounting = true;
+	bool cost_paths = false;
+
+	CostVolumes cvs;
+	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,5.0,5.0,5.0,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
+
+	// method : constant
+	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
+	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
+    int direction[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
+
+	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
+	//middle point must stay invalid, equal to invalid value
+	EXPECT_FLOAT_EQ(5.0,cvs.cost_volume[13]);
+}
+
+//Global Test of sgm function: aggregation value from 8 directions on a middle point of cost 
+
+TEST(sgmTestFloat, TestMiddleValue){
+
+    int nb_row,nb_col,nb_disp;
+	nb_row = 3;
+	nb_col = 3;
+	nb_disp = 3;
+	float P1, P2, invalid_value;
+	P1 = 1.0;
+	P2 = 3.0;
+	invalid_value = 5.0;
+
+	CostVolumes cvs;
+	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
+
+	bool overcounting = false;
+	bool cost_paths = false;
+
+    // method : constant
+	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
+	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
+    int direction[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
+
+	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
+	//middle point must stay invalid, equal to invalid value
+	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
+	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
+	// L2 = -0.7 + min(0.5 ; 1+1 ; 0.3 +1) - 0.3 = -0.5
+	// L3 = -0.7 + min(0.6 ; 0.2+1 ; -0.8 + 1) - (-0.8) = 0.3
+	// L4 = -0.7 + min(0.4 ; 0.4+1 ; -0.1+1) - (-0.1) = - 0.2
+	// L5 = -0.7 + min(-0.1 ; 0.1+1 ; 0.1+1) - (-0.1) = -0.7
+	// L6 = -0.7 + min(0.2 ; 0.4 +1 ; 0.5 +1) - 0.2 = -0.7
+	// L7 = -0.7 + min(0.7 ; -0.6+1 ; -0.8+1) - (-0.8) = 0.3
+
+	EXPECT_FLOAT_EQ(-2.3 ,cvs.cost_volume[13]);
+
+}
+
+//Global Test of sgm function: aggregation value from 8 directions on a middle point of cost with overcounting
+
+TEST(sgmTestFloat, TestMiddleValueOvercounting){
+
+    int nb_row,nb_col,nb_disp;
+	nb_row = 3;
+	nb_col = 3;
+	nb_disp = 3;
+	float P1, P2, invalid_value;
+	P1 = 1.0;
+	P2 = 3.0;
+	invalid_value = 5.0;
+
+	CostVolumes cvs;
+	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
+
+	bool overcounting = true;
+	bool cost_paths = false;
+
+    // method : constant
+	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
+	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
+    int penalties[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
+
+	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
+	//middle point must stay invalid, equal to invalid value
+	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
+	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
+	// L2 = -0.7 + min(0.5 ; 1+1 ; 0.3 +1) - 0.3 = -0.5
+	// L3 = -0.7 + min(0.6 ; 0.2+1 ; -0.8 + 1) - (-0.8) = 0.3
+	// L4 = -0.7 + min(0.4 ; 0.4+1 ; -0.1+1) - (-0.1) = - 0.2
+	// L5 = -0.7 + min(-0.1 ; 0.1+1 ; 0.1+1) - (-0.1) = -0.7
+	// L6 = -0.7 + min(0.2 ; 0.4 +1 ; 0.5 +1) - 0.2 = -0.7
+	// L7 = -0.7 + min(0.7 ; -0.6+1 ; -0.8+1) - (-0.8) = 0.3
+	// Overcounting : -2.3 + (-0.7 x 7 ) = 2.6
+	EXPECT_FLOAT_EQ(2.6 ,cvs.cost_volume[13]);
+
+}
+
+//Global Test of sgm function: aggregation value from 8 directions on a middle point of cost with cost path option
+
+TEST(sgmTestFloat, TestMiddleValueCostPaths){
+
+    int nb_row,nb_col,nb_disp;
+	nb_row = 3;
+	nb_col = 3;
+	nb_disp = 3;
+	float P1, P2, invalid_value;
+	P1 = 1.0;
+	P2 = 3.0;
+	invalid_value = 5.0;
+
+	CostVolumes cvs;
+	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
+
+	bool overcounting = false;
+	bool cost_paths = true;
+
+    // method : constant
+	float p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
+	float p2[9*8]={P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2,P2};
+    int direction[2*8]={0,1, 1,0, 1,1, 1,-1, 0,-1, -1,0, -1,-1, -1,1};
+
+	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, cost_paths, overcounting);
+	//middle point must stay invalid, equal to invalid value
+	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
+	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
+	// L2 = -0.7 + min(0.5 ; 1+1 ; 0.3 +1) - 0.3 = -0.5
+	// L3 = -0.7 + min(0.6 ; 0.2+1 ; -0.8 + 1) - (-0.8) = 0.3
+	// L4 = -0.7 + min(0.4 ; 0.4+1 ; -0.1+1) - (-0.1) = - 0.2
+	// L5 = -0.7 + min(-0.1 ; 0.1+1 ; 0.1+1) - (-0.1) = -0.7
+	// L6 = -0.7 + min(0.2 ; 0.4 +1 ; 0.5 +1) - 0.2 = -0.7
+	// L7 = -0.7 + min(0.7 ; -0.6+1 ; -0.8+1) - (-0.8) = 0.3
+	// Overcounting : -2.3 + (-0.7 x 7 ) = 2.6
+	EXPECT_EQ(1,cvs.cost_volume_min[32]);
 
 }
 
