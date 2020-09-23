@@ -62,6 +62,7 @@ if USING_CYTHON:
 else:
     sources = [src_dir + "/lib/sgm.cpp", src_dir+"/sgm_wrapper.cpp"]
 
+
 ext_1 = Extension('libSGM.sgm_wrapper',
                   sources,
                   language='c++',
@@ -86,6 +87,9 @@ except ImportError:
 os.environ['CC'] = shutil.which('gcc')
 os.environ['CXX'] = shutil.which('g++')
 
+requirements = ['numpy',
+                'nose2']
+
 setup(name='libSGM',
       version='x.y.z',
       description='libSGM is a CNES version of H.Hirschmuller Semi-Global Matching',
@@ -103,4 +107,11 @@ setup(name='libSGM',
           'build_sphinx': {
               'build_dir': ('setup.py', 'doc/build/'),
               'source_dir': ('setup.py', 'doc/source/')}},
+      entry_points={
+              'libsgm': [
+              'python_libsgm = libsgm_python.sgm_python:run_sgm',
+              'python_libsgm_parall = libsgm_python.sgm_python_parall:run_sgm_parall',
+              ],
+      },
+      install_requires=requirements
       )
