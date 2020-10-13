@@ -56,6 +56,22 @@ libSGM must be used as a package :
 Input Cost volume type for sgm_wrapper function can be *float* or *uint8*. 
 Actually, libSGM would be able to receive any type thanks to "template" methods. You just need to add the type you want in sgm_wrapper.pyx on `ctypedef fused my_cv_type` and instantiate function at the end of lib/sgm.cpp . 
 
+
+## Python version of LibSGM
+
+Two python versions of LibSGM are available.
+
+They can be called like a package :
+
+```
+from libsgm_python.sgm_python import run_sgm
+```
+```
+from libsgm_python.sgm_python_parall import run_sgm_parall
+```
+
+Or by calling the fonctions from the  Entry Points `python_libsgm` and `python_libsgm_parall`
+
 ## References
 
 If you use this CNES software, please cite the following paper: 
