@@ -109,8 +109,7 @@ setup(name='libSGM',
               'source_dir': ('setup.py', 'doc/source/')}},
       entry_points={
               'libsgm': [
-              'python_libsgm = libsgm_python.sgm_python:run_sgm',
-              'python_libsgm_parall = libsgm_python.sgm_python_parall:run_sgm_parall',
+              'python_libsgm = libsgm_python.sgm_python:run_sgm'
               ],
       },
       install_requires=requirements
