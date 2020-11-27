@@ -1,3 +1,7 @@
 build/
 .eggs/
 doc/doxyoutput/
+.coverage
+coverage.xml
+nosetests.xml
+pylint-report.txt
