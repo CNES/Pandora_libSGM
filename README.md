@@ -1,81 +1,59 @@
-## libSGM
+<h1 align="center"> libSGM </h1>
 
-C++ implementation of Semi-Global Matching (SGM) algorithm that is wrapped with cython to provide a `libsgm` python module. 
+<h4 align="center">Semi-Global Matching algorithm.</h4>
 
-SGM references this work is based upon: 
- - [H. Hirschmuller, "Stereo Processing by Semiglobal Matching and Mutual Information," in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 30, no. 2, pp. 328-341, Feb. 2008. doi: 10.1109/TPAMI.2007.1166] 
- - [Ernst, Ines & Hirschmüller, Heiko. (2008). Mutual Information Based Semi-Global Stereo Matching on the GPU. Proceedings of the International Symposium on Visual Computing. 5358. 10.1007/978-3-540-89639-5_22.]
-- [Hirschmüller, Heiko & Buder, Maximilian & Ernst, Ines. (2012). Memory Efficient Semi-Global Matching. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. I-3. 10.5194/isprsannals-I-3-371-2012.]
+<p align="center">
+  <a href="https://opensource.org/licenses/Apache-2.0/"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
+</p>
 
-## Dependencies
+<p align="center">
+  <a href="#overview">Overview</a> •
+  <a href="#install">Install</a> •
+    <a href="#usage">Usage</a> •
+  <a href="#related">Related</a> •
+  <a href="#references">References</a>
+</p>
 
-Dependencies are 
+## Overview
 
-    python, numpy, gcc
-    
-For developers, there is another one
+C++ implementation of Semi-Global Matching (SGM) algorithm that is wrapped with cython to provide a `libsgm` python module based on [[Hirschmuller, 2008]](#1.), [[Ernst, Ines & Hirschmüller, 2008]](#2.) and [[Hirschmüller, Buder & Ernst, 2012]](#3.).
 
-    cython
+## Install
 
-## Installation
-First of all, make sure numpy is already installed.
+**libsgm** is available on Pypi and can be installed by:
 
-    pip install numpy 
-
-This package can be install through the following commands:
-
-    cd libsgm
-    pip install .
-
-For developers,before pip command, do not forget to delete sources/sgm_wrapper.cpp file
-If not, pip won't use cython to generate a new .cpp file. It will use the last updated .cpp file on git repository. This may cause conflicts. 
-
-**Build documentation**
-
-Make sure Doxygen, latex and dvipng is already installed
-
+```bash
+pip install numpy
+pip install libsgm
 ```
-pip install exhale
-pip install sphinx-rtd-theme
-python setup.py build_sphinx
-```
-
-Documentation is built in libsgm/doc/build/html
 
 ## Usage
 
-libSGM must be used as a package : 
+libSGM must be used as a package :
 
-    from libSGM import sgm_wrapper
-
-## Things to know
-
-* **Input Cost volume type**
-
-
-Input Cost volume type for sgm_wrapper function can be *float* or *uint8*. 
-Actually, libSGM would be able to receive any type thanks to "template" methods. You just need to add the type you want in sgm_wrapper.pyx on `ctypedef fused my_cv_type` and instantiate function at the end of lib/sgm.cpp . 
-
-
-## Python version of LibSGM
-
-Two python versions of LibSGM are available.
-
-They can be called like a package :
-
-```
-from libsgm_python.sgm_python import run_sgm
-```
-```
-from libsgm_python.sgm_python_parall import run_sgm_parall
+```python
+from libSGM import sgm_wrapper
+...
+cost_volumes_out = sgm_wrapper.sgm_api(cost_volume_in, p1, p2, directions, invalid_value, False, False)
 ```
 
-Or by calling the fonctions from the  Entry Points `python_libsgm` and `python_libsgm_parall`
+Let's see [pandora_plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm) for real life exemple.
+
+## Related
+
+[Pandora](https://github.com/CNES/Pandora) - A stereo matching framework  
+[Plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm) - Stereo Matching Algorithm plugin for Pandora  
 
 ## References
 
-If you use this CNES software, please cite the following paper: 
+Please cite the following paper when using libsgm:   
+*Cournet, M., Sarrazin, E., Dumas, L., Michel, J., Guinet, J., Youssefi, D., Defonte, V., Fardet, Q., 2020. Ground-truth generation and disparity estimation for optical satellite imagery. ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences.*
 
-Cournet, M., Sarrazin, E., Dumas, L., Michel, J., Guinet, J., Youssefi, D., Defonte, V., Fardet, Q., 2020. 
-Ground-truth generation and disparity estimation for optical satellite imagery.
-ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences.
+<a id="1.">[Hirschmuller, 2008]</a> 
+*H. Hirschmuller, "Stereo Processing by Semiglobal Matching and Mutual Information," in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 30, no. 2, pp. 328-341, Feb. 2008. doi: 10.1109/TPAMI.2007.1166*
+
+<a id="2.">[Ernst, Ines & Hirschmüller, 2008]</a> 
+*Ernst, Ines & Hirschmüller, Heiko. (2008). Mutual Information Based Semi-Global Stereo Matching on the GPU. Proceedings of the International Symposium on Visual Computing. 5358. 10.1007/978-3-540-89639-5_22.*
+
+<a id="3.">[Hirschmüller, Buder & Ernst, 2012]</a> 
+*Hirschmüller, Heiko & Buder, Maximilian & Ernst, Ines. (2012). Memory Efficient Semi-Global Matching. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. I-3. 10.5194/isprsannals-I-3-371-2012.*
