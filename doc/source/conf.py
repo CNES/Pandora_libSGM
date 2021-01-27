@@ -1,18 +1,18 @@
-#
+# pylint: skip-file
 # Copyright (c) 2020 Centre National d'Etudes Spatiales (CNES).
 #
 # This file is part of LIBSGM
 #
 #     https://github.com/CNES/Pandora_libsgm
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
@@ -61,18 +61,18 @@ extensions = [
 
 # Setup the breathe extension
 breathe_projects = {
-    "My Project": "../doxyoutput/xml"
+    'My Project': '../doxyoutput/xml'
 }
-breathe_default_project = "My Project"
+breathe_default_project = 'My Project'
 
 exhale_args = {
     # These arguments are required
-    "containmentFolder":     "./api_reference/",
-    "rootFileName":          "library_root.rst",
-    "rootFileTitle":         "Library C++ API",
-    "doxygenStripFromPath":  "..",
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin":    "INPUT =../../sources/lib/sgm.hpp"
+    'containmentFolder':     './api_reference/',
+    'rootFileName':          'library_root.rst',
+    'rootFileTitle':         'Library C++ API',
+    'doxygenStripFromPath':  '..',
+    'exhaleExecutesDoxygen': True,
+    'exhaleDoxygenStdin':    'INPUT =../../sources/lib/sgm.hpp'
 }
 
 # Tell sphinx what the primary language being documented is.
@@ -99,7 +99,7 @@ html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+# so a file named 'default.css' will overwrite the builtin 'default.css'.
 html_static_path = ['_static']
 
 latex_elements = {
