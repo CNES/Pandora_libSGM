@@ -1,0 +1,8 @@
+language: cpp
+compiler: gcc
+script: 
+  - cd ${TRAVIS_BUILD_DIR}
+  - make tests
+  - gcov -r . --object-directory=`pwd` > gcov-report.xml
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
