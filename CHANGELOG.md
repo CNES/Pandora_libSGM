@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.3.2 (January 2021)
+
+### Changed
+
+- Readme refactoring
+
 ## 0.3.1 (November 2020)
 
 ### Added
