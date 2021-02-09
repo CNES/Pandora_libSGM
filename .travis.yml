@@ -1,5 +1,10 @@
 language: cpp
 compiler: gcc
+dist: focal
+before_install:
+  - sudo apt-get install python-is-python3
+  - sudo apt-get install python3-pip
+  - pip install numpy
 script: 
   - cd ${TRAVIS_BUILD_DIR}
   - make tests
