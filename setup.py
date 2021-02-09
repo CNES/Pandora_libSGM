@@ -1,3 +1,4 @@
+# pylint: disable=ungrouped-imports
 #!/usr/bin/env python
 # coding: utf8
 #
@@ -20,21 +21,22 @@
 # limitations under the License.
 #
 """
-This module contains the required libraries and softwares allowing to execute the software, and setup elements to configure and identify the software. 
+This module contains the required libraries and softwares allowing to execute the software,
+and setup elements to configure and identify the software.
 """
 
-from setuptools import setup, find_packages
 import os
 import shutil
-from codecs import open
-import sys
+from codecs import open as opn
+
+from setuptools import setup, find_packages
 
 try:
     import numpy
 except ImportError:
-    print("")
-    print("WARNING ! Installation of numpy is required before libSGM installation")
-    print("")
+    print('')
+    print('WARNING ! Installation of numpy is required before libSGM installation')
+    print('')
     raise
 
 try:
@@ -42,52 +44,51 @@ try:
 except ImportError:
     from setuptools import Extension
     from setuptools.command.build_ext import build_ext
+
     USING_CYTHON = False
 else:
     from Cython.Distutils import build_ext
+
     USING_CYTHON = True
 
+CMDCLASS = {'build_ext': build_ext}
 
-cmdclass = {'build_ext': build_ext}
 
 def readme():
-    with open('README.md', "r", "utf-8") as f:
-        return f.read()
+    with opn('README.md', 'r', 'utf-8') as file:
+        return file.read()
 
 
-src_dir = "sources"
+SCR_DIR = 'sources'
 
 if USING_CYTHON:
-    sources = [src_dir + "/lib/sgm.cpp", src_dir+"/sgm_wrapper.pyx"]
+    sources = [SCR_DIR + '/lib/sgm.cpp', SCR_DIR + '/sgm_wrapper.pyx']
 else:
-    sources = [src_dir + "/lib/sgm.cpp", src_dir+"/sgm_wrapper.cpp"]
-
+    sources = [SCR_DIR + '/lib/sgm.cpp', SCR_DIR + '/sgm_wrapper.cpp']
 
 ext_1 = Extension('libSGM.sgm_wrapper',
                   sources,
                   language='c++',
                   library_dirs=[],
                   libraries=[],
-                  include_dirs=[numpy.get_include(), src_dir + "/lib/sgm.hpp" ],
-                  extra_compile_args=['-O3', '-fopenmp' ,'-std=c++11'],
+                  include_dirs=[numpy.get_include(), SCR_DIR + '/lib/sgm.hpp'],
+                  extra_compile_args=['-O3', '-fopenmp', '-std=c++11'],
                   extra_link_args=['-lgomp']
                   )
 
 extensions = [ext_1]
 
-
-
 try:
     from sphinx.setup_command import BuildDoc
-    cmdclass.update({'build_sphinx': BuildDoc})
+
+    CMDCLASS.update({'build_sphinx': BuildDoc})
 except ImportError:
     print('WARNING: sphinx not available. Doc cannot be built')
-
 
 os.environ['CC'] = shutil.which('gcc')
 os.environ['CXX'] = shutil.which('g++')
 
-requirements = ['numpy',
+REQUIREMENTS = ['numpy',
                 'nose2']
 
 setup(name='libSGM',
@@ -102,15 +103,15 @@ setup(name='libSGM',
       zip_safe=False,
       packages=find_packages(),
       ext_modules=extensions,
-      cmdclass=cmdclass,
+      cmdclass=CMDCLASS,
       command_options={
           'build_sphinx': {
               'build_dir': ('setup.py', 'doc/build/'),
               'source_dir': ('setup.py', 'doc/source/')}},
       entry_points={
-              'libsgm': [
+          'libsgm': [
               'python_libsgm = libsgm_python.sgm_python:run_sgm'
-              ],
+          ],
       },
-      install_requires=requirements
+      install_requires=REQUIREMENTS
       )

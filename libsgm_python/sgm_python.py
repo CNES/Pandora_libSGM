@@ -24,7 +24,6 @@ This module contains functions to execute python SGM library.
 """
 
 import numpy as np
-import warnings
 
 from .lr_manager import LrManager
 
@@ -55,16 +54,16 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
     if cost_paths:
         cv_out["cv_min"] = np.zeros((cv_in.shape[0], cv_in.shape[1], len(directions)))
 
-    for i in range(len(directions)):
+    for idx_dir in range(len(directions)): # pylint:disable=consider-using-enumerate
         # optimize this direction
-        lr_manager = LrManager(cv_in.shape, directions[i])
+        lr_manager = LrManager(cv_in.shape, directions[idx_dir])
 
         nb_planes = len(lr_manager.planes_front)
         while nb_planes > 0:
             current_lr = []
 
-            for p in range(nb_planes):
-                front_plane = lr_manager.planes_front[p]
+            for p_idx in range(nb_planes):
+                front_plane = lr_manager.planes_front[p_idx]
                 if len(lr_manager.planes_previous) == 0:
                     # initialized, previous plane doesnt exist
                     partial_lr = cv_in[front_plane["i"], front_plane["j"], :]
@@ -72,17 +71,18 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
                     current_lr.append(partial_lr)
                 else:
                     partial_lr = np.zeros(cv_in[front_plane["i"], front_plane["j"], :].shape)
-                    previous_lr = lr_manager.get_previous_lr(p)
-                    for d in range(cv_in.shape[2]):
-                        partial_lr[:, d] = compute_lr(
-                            cv_in[front_plane["i"], front_plane["j"], :], previous_lr, d,
-                            p1_in[front_plane["i"], front_plane["j"], i], p2_in[front_plane["i"], front_plane["j"], i])
+                    previous_lr = lr_manager.get_previous_lr(p_idx)
+                    for idx in range(cv_in.shape[2]):
+                        partial_lr[:, idx] = compute_lr(
+                            cv_in[front_plane["i"], front_plane["j"], :], previous_lr, idx,
+                            p1_in[front_plane["i"], front_plane["j"], idx_dir], p2_in[front_plane["i"],
+                                                                                      front_plane["j"], idx_dir])
 
                     cv_out["cv"][front_plane["i"], front_plane["j"]] += partial_lr
                     current_lr.append(partial_lr)
 
                 if cost_paths:
-                    cv_out["cv_min"][front_plane["i"], front_plane["j"], i] = np.argmin(partial_lr, axis=1)
+                    cv_out["cv_min"][front_plane["i"], front_plane["j"], idx_dir] = np.argmin(partial_lr, axis=1)
 
             lr_manager.set_current_lr(current_lr)
 
@@ -96,7 +96,7 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
     return cv_out
 
 
-def compute_lr(cv_in_2d_front: np.ndarray, lr_2d_previous: np.ndarray, d: int, p1_in_1d: np.ndarray,
+def compute_lr(cv_in_2d_front: np.ndarray, lr_2d_previous: np.ndarray, disp: int, p1_in_1d: np.ndarray,
                p2_in_1d: np.ndarray):
     """
     Compute Lr of current plane, at a given disparity
@@ -117,11 +117,11 @@ def compute_lr(cv_in_2d_front: np.ndarray, lr_2d_previous: np.ndarray, d: int, p
 
     # Assign penalties
     penalties = np.repeat(p2_in_1d[:, np.newaxis], cv_in_2d_front.shape[1], axis=1)
-    penalties[:, d] = 0
-    if (d - 1) >= 0:
-        penalties[:, d - 1] = p1_in_1d
-    if (d + 1) < cv_in_2d_front.shape[1]:
-        penalties[:, d + 1] = p1_in_1d
+    penalties[:, disp] = 0
+    if (disp - 1) >= 0:
+        penalties[:, disp - 1] = p1_in_1d
+    if (disp + 1) < cv_in_2d_front.shape[1]:
+        penalties[:, disp + 1] = p1_in_1d
 
     min_previous_lr_penalties = np.nanmin(lr_2d_previous + penalties, axis=1)
     min_previous_lr = np.nanmin(lr_2d_previous, axis=1)
@@ -129,4 +129,4 @@ def compute_lr(cv_in_2d_front: np.ndarray, lr_2d_previous: np.ndarray, d: int, p
     min_previous_lr_penalties[indexes_nan] = 0
     min_previous_lr[indexes_nan] = 0
 
-    return cv_in_2d_front[:, d] + min_previous_lr_penalties - min_previous_lr
+    return cv_in_2d_front[:, disp] + min_previous_lr_penalties - min_previous_lr

@@ -23,9 +23,10 @@
 This module contains functions to execute python SGM library.
 """
 
+from typing import List
+
 import numpy as np
 from numba import njit, prange
-from typing import List
 
 from .lr_manager import LrManager
 
@@ -54,13 +55,12 @@ def run_sgm_parall(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, dire
     # Compute initial points
     # [i0, j0, di, dj, num_dir]
     starting_points = []
-    for i in range(len(directions)):
-        d = directions[i]
+    for idx, dir_ in np.enumerate(directions):
         # optimize this direction
-        lr_manager = LrManager(cv_in.shape, directions[i])
+        lr_manager = LrManager(cv_in.shape, dir_)
 
         for plane in lr_manager.planes_front:
-            list_indexes = [[i0, j0, d[0], d[1], i] for idx1, i0 in enumerate(plane["i"]) for idx2, j0 in
+            list_indexes = [[i0, j0, dir_[0], dir_[1], idx] for idx1, i0 in enumerate(plane["i"]) for idx2, j0 in
                             enumerate(plane["j"])]
             starting_points += list_indexes
 
@@ -101,21 +101,21 @@ def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p
     in_shape = cv_in.shape
     cv = {"cv": np.zeros(in_shape)}
 
-    for i in range(len(dir_str)):
-        name = "cv_" + dir_str[i]
+    for idx, dir_ in np.enumerate(dir_str):
+        name = "cv_" + dir_
         cv[name] = np.zeros(in_shape)
 
     cv_min = np.zeros((in_shape[0], in_shape[1], p1_in.shape[2]))
 
-    for p in prange(starting_points.shape[0]):
-        point = starting_points[p]
+    for idx in prange(starting_points.shape[0]): #pylint:disable=not-an-iterable
+        point = starting_points[idx]
 
         d_i = point[2]
         d_j = point[3]
         i_0 = point[0]
         j_0 = point[1]
-        dir = point[4]
-        name = "cv_" + dir_str[dir]
+        dir_p = point[4]
+        name = "cv_" + dir_str[dir_p]
 
         cv["cv"][i_0, j_0, :] += cv_in[i_0, j_0, :].copy()
         cv[name][i_0, j_0, :] += cv_in[i_0, j_0, :].copy()
@@ -128,17 +128,17 @@ def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p
 
             current_lr = cv_in[i, j, :].copy()
 
-            p1 = p1_in[i, j, dir]
-            p2 = p2_in[i, j, dir]
+            p1 = p1_in[i, j, dir_p]
+            p2 = p2_in[i, j, dir_p]
 
-            for d in range(in_shape[2]):
+            for dir_in in range(in_shape[2]):
                 penalties = p2 * np.ones(in_shape[2])
-                penalties[max(0, d-1): min(d+1, in_shape[2]-1) + 1] = p1
-                penalties[d] = 0
+                penalties[max(0, dir_in - 1): min(dir_in + 1, in_shape[2] - 1) + 1] = p1
+                penalties[dir_in] = 0
 
                 val = np.nanmin(penalties + previous_lr) - np.nanmin(previous_lr)
                 if not np.isnan(val):
-                    current_lr[d] += val
+                    current_lr[dir_in] += val
 
             # save current lr
             cv["cv"][i, j, :] += current_lr
@@ -147,7 +147,7 @@ def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p
             # next pixel
             previous_lr = current_lr
 
-            cv_min[i, j, dir] = np.argmin(current_lr)
+            cv_min[i, j, dir_p] = np.argmin(current_lr)
 
             i += d_i
             j += d_j

@@ -1,3 +1,4 @@
+#pylint:disable=fixme
 #!/usr/bin/env python
 # coding: utf8
 #
@@ -22,16 +23,17 @@
 """
 This module contains functions to execute python SGM library.
 """
-
-import numpy as np
 import copy
 from typing import List, Tuple
+
+import numpy as np
 
 
 class LrManager:
     """
     This class manages parallel planes indices moving along given direction
     """
+
     # initialize
     def __init__(self, cv_shape: List, direction: Tuple):
         """
@@ -43,7 +45,7 @@ class LrManager:
         :type direction:  Tuple
         """
         self.cv_shape = cv_shape
-        self.d = direction
+        self.dir = direction
 
         # init working matrices
         self.planes_front = []
@@ -75,39 +77,39 @@ class LrManager:
         self.planes_previous = copy.deepcopy(self.planes_front)
         self.previous_lr = self.current_lr
         delete_items_indexes = []
-        for p in range(len(self.planes_front)):
-            self.planes_front[p]["i"] += self.d[0]
-            self.planes_front[p]["j"] += self.d[1]
+        for idx in range(len(self.planes_front)):
+            self.planes_front[idx]["i"] += self.dir[0]
+            self.planes_front[idx]["j"] += self.dir[1]
 
             # get invalid indexes
             indexes_invalid_i = np.where(
-                (self.planes_front[p]["i"] < 0) + (self.planes_front[p]["i"] >= self.cv_shape[0]))
+                (self.planes_front[idx]["i"] < 0) + (self.planes_front[idx]["i"] >= self.cv_shape[0]))
             indexes_invalid_j = np.where(
-                (self.planes_front[p]["j"] < 0) + (self.planes_front[p]["j"] >= self.cv_shape[1]))
+                (self.planes_front[idx]["j"] < 0) + (self.planes_front[idx]["j"] >= self.cv_shape[1]))
 
             # remove invalid indexes
-            self.planes_front[p]["i"] = np.delete(self.planes_front[p]["i"], indexes_invalid_i, axis=0)
-            self.planes_previous[p]["i"] = np.delete(self.planes_previous[p]["i"], indexes_invalid_i, axis=0)
+            self.planes_front[idx]["i"] = np.delete(self.planes_front[idx]["i"], indexes_invalid_i, axis=0)
+            self.planes_previous[idx]["i"] = np.delete(self.planes_previous[idx]["i"], indexes_invalid_i, axis=0)
 
-            self.planes_front[p]["j"] = np.delete(self.planes_front[p]["j"], indexes_invalid_j, axis=0)
-            self.planes_previous[p]["j"] = np.delete(self.planes_previous[p]["j"], indexes_invalid_j, axis=0)
+            self.planes_front[idx]["j"] = np.delete(self.planes_front[idx]["j"], indexes_invalid_j, axis=0)
+            self.planes_previous[idx]["j"] = np.delete(self.planes_previous[idx]["j"], indexes_invalid_j, axis=0)
 
-            if self.planes_front[p]["i"].shape[0] == 0 or self.planes_front[p]["j"].shape[0] == 0:
+            if self.planes_front[idx]["i"].shape[0] == 0 or self.planes_front[idx]["j"].shape[0] == 0:
                 # delete all object
-                delete_items_indexes.append(p)
+                delete_items_indexes.append(idx)
             else:
                 # delete in stored lr, as list are of size (1) (n) or (m) (1), only one delete is effective
 
                 if self.previous_lr is not None:
-                    self.previous_lr[p] = np.delete(self.previous_lr[p], indexes_invalid_i, axis=0)
-                    self.previous_lr[p] = np.delete(self.previous_lr[p], indexes_invalid_j, axis=0)
+                    self.previous_lr[idx] = np.delete(self.previous_lr[idx], indexes_invalid_i, axis=0)
+                    self.previous_lr[idx] = np.delete(self.previous_lr[idx], indexes_invalid_j, axis=0)
 
         # delete items
-        for p in sorted(delete_items_indexes, reverse=True):
-            self.planes_front.pop(p)
-            self.planes_previous.pop(p)
+        for idx in sorted(delete_items_indexes, reverse=True):
+            self.planes_front.pop(idx)
+            self.planes_previous.pop(idx)
             if self.previous_lr is not None:
-                self.previous_lr.pop(p)
+                self.previous_lr.pop(idx)
 
     def set_current_lr(self, lr_s: np.ndarray) -> None:
         """
