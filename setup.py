@@ -107,7 +107,8 @@ setup(name='libSGM',
       command_options={
           'build_sphinx': {
               'build_dir': ('setup.py', 'doc/build/'),
-              'source_dir': ('setup.py', 'doc/source/')}},
+              'source_dir': ('setup.py', 'doc/source/'),
+              'warning_is_error': ('setup.py', True)}},
       entry_points={
           'libsgm': [
               'python_libsgm = libsgm_python.sgm_python:run_sgm'
