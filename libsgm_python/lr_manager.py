@@ -48,8 +48,8 @@ class LrManager:
         self.dir = direction
 
         # init working matrices
-        self.planes_front = []
-        self.planes_previous = []
+        self.planes_front: List = []
+        self.planes_previous: List = []
 
         # store partial lr
         self.current_lr = None
@@ -129,4 +129,4 @@ class LrManager:
         :return: previous partial cost lr
         :rtype: np.ndarray
         """
-        return self.previous_lr[num_plane]
+        return self.previous_lr[num_plane] #type:ignore
