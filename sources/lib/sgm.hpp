@@ -23,10 +23,10 @@
 /**
 * Structure to represent Aggregated Cost Volume and the positions of minimum costs along each direction
 */
-typedef struct CostVolumes{
+struct CostVolumes{
     float * cost_volume;
     int * cost_volume_min;
-}CostVolumes;
+};
 
 
 /**

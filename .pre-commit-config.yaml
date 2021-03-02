@@ -7,3 +7,11 @@ repos:
         language: system
         files: \.py$
         stages: [commit]
+
+    -   id: sphinx-checking
+        name: Checking Sphinx building
+        entry: python setup.py build_sphinx
+        language: system
+        files: ^(doc/.*|libsgm_python/.*)$
+        pass_filenames: False
+        stages: [ push ]

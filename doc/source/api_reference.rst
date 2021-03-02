@@ -5,3 +5,4 @@ Api Reference
 
     api_reference/sgm_wrapper
     api_reference/library_root
+    api_reference/modules
