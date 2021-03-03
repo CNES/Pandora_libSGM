@@ -1,3 +1,4 @@
+# type:ignore
 # pylint: disable=ungrouped-imports
 #!/usr/bin/env python
 # coding: utf8
