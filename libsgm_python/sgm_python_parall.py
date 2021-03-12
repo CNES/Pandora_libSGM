@@ -31,8 +31,14 @@ from numba import njit, prange
 from .lr_manager import LrManager
 
 
-def run_sgm_parall(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions: np.ndarray,
-                   cost_paths: bool = False, overcounting: bool = False):
+def run_sgm_parall(
+    cv_in: np.ndarray,
+    p1_in: np.ndarray,
+    p2_in: np.ndarray,
+    directions: np.ndarray,
+    cost_paths: bool = False,
+    overcounting: bool = False,
+):
     """
     Run Python LibSGM
 
@@ -60,8 +66,11 @@ def run_sgm_parall(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, dire
         lr_manager = LrManager(cv_in.shape, dir_)
 
         for plane in lr_manager.planes_front:
-            list_indexes = [[i0, j0, dir_[0], dir_[1], idx] for idx1, i0 in enumerate(plane["i"]) for idx2, j0 in
-                            enumerate(plane["j"])]
+            list_indexes = [
+                [i0, j0, dir_[0], dir_[1], idx]
+                for idx1, i0 in enumerate(plane["i"])
+                for idx2, j0 in enumerate(plane["j"])
+            ]
             starting_points += list_indexes
 
     # compute costs for all
@@ -78,8 +87,14 @@ def run_sgm_parall(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, dire
 
 
 @njit(parallel=True, cache=False)
-def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, dir_str: np.ndarray,
-                  cost_paths: bool = False):
+def compute_costs(
+    starting_points: List,
+    cv_in: np.ndarray,
+    p1_in: np.ndarray,
+    p2_in: np.ndarray,
+    dir_str: np.ndarray,
+    cost_paths: bool = False,
+):
     """
     Compute cost volume, starting from given points / directions
 
@@ -107,7 +122,7 @@ def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p
 
     cv_min = np.zeros((in_shape[0], in_shape[1], p1_in.shape[2]))
 
-    for idx in prange(starting_points.shape[0]): #type:ignore #pylint:disable=not-an-iterable
+    for idx in prange(starting_points.shape[0]):  # type:ignore #pylint:disable=not-an-iterable
         point = starting_points[idx]
 
         d_i = point[2]
@@ -133,7 +148,7 @@ def compute_costs(starting_points: List, cv_in: np.ndarray, p1_in: np.ndarray, p
 
             for dir_in in range(in_shape[2]):
                 penalties = p2 * np.ones(in_shape[2])
-                penalties[max(0, dir_in - 1): min(dir_in + 1, in_shape[2] - 1) + 1] = p1
+                penalties[max(0, dir_in - 1) : min(dir_in + 1, in_shape[2] - 1) + 1] = p1
                 penalties[dir_in] = 0
 
                 val = np.nanmin(penalties + previous_lr) - np.nanmin(previous_lr)

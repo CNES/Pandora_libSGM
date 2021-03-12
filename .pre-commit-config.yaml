@@ -20,3 +20,11 @@ repos:
         language: system
         files: \.py$
         stages: [ commit ]
+    -   id: black
+        name: black
+        entry: black --line-length=120
+        language: system
+        files: \.py$
+        stages: [ commit ]
+        types: [ python ]
+

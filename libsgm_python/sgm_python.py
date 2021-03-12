@@ -28,8 +28,14 @@ import numpy as np
 from .lr_manager import LrManager
 
 
-def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions: np.ndarray, cost_paths: bool = False,
-            overcounting: bool = False):
+def run_sgm(
+    cv_in: np.ndarray,
+    p1_in: np.ndarray,
+    p2_in: np.ndarray,
+    directions: np.ndarray,
+    cost_paths: bool = False,
+    overcounting: bool = False,
+):
     """
     Run Python LibSGM
 
@@ -54,7 +60,7 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
     if cost_paths:
         cv_out["cv_min"] = np.zeros((cv_in.shape[0], cv_in.shape[1], len(directions)))
 
-    for idx_dir in range(len(directions)): # pylint:disable=consider-using-enumerate
+    for idx_dir in range(len(directions)):  # pylint:disable=consider-using-enumerate
         # optimize this direction
         lr_manager = LrManager(cv_in.shape, directions[idx_dir])
 
@@ -74,9 +80,12 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
                     previous_lr = lr_manager.get_previous_lr(p_idx)
                     for idx in range(cv_in.shape[2]):
                         partial_lr[:, idx] = compute_lr(
-                            cv_in[front_plane["i"], front_plane["j"], :], previous_lr, idx,
-                            p1_in[front_plane["i"], front_plane["j"], idx_dir], p2_in[front_plane["i"],
-                                                                                      front_plane["j"], idx_dir])
+                            cv_in[front_plane["i"], front_plane["j"], :],
+                            previous_lr,
+                            idx,
+                            p1_in[front_plane["i"], front_plane["j"], idx_dir],
+                            p2_in[front_plane["i"], front_plane["j"], idx_dir],
+                        )
 
                     cv_out["cv"][front_plane["i"], front_plane["j"]] += partial_lr
                     current_lr.append(partial_lr)
@@ -87,7 +96,7 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
             lr_manager.set_current_lr(current_lr)
 
             # compute next planes
-            lr_manager.next()
+            lr_manager.next()  # pylint:disable=not-callable
             nb_planes = len(lr_manager.planes_front)
 
     if overcounting:
@@ -96,8 +105,13 @@ def run_sgm(cv_in: np.ndarray, p1_in: np.ndarray, p2_in: np.ndarray, directions:
     return cv_out
 
 
-def compute_lr(cv_in_2d_front: np.ndarray, lr_2d_previous: np.ndarray, disp: int, p1_in_1d: np.ndarray,
-               p2_in_1d: np.ndarray):
+def compute_lr(
+    cv_in_2d_front: np.ndarray,
+    lr_2d_previous: np.ndarray,
+    disp: int,
+    p1_in_1d: np.ndarray,
+    p2_in_1d: np.ndarray,
+):
     """
     Compute Lr of current plane, at a given disparity
 
