@@ -1,4 +1,4 @@
-#pylint:disable=fixme
+# pylint:disable=fixme
 #!/usr/bin/env python
 # coding: utf8
 #
@@ -63,12 +63,22 @@ class LrManager:
             self.planes_front.append({"i": np.array([0]), "j": np.array(list(range(0, cv_shape[1])))})
             start = 1
         if direction[0] < 0:
-            self.planes_front.append({"i": np.array([cv_shape[0] - 1]), "j": np.array(list(range(0, cv_shape[1])))})
+            self.planes_front.append(
+                {
+                    "i": np.array([cv_shape[0] - 1]),
+                    "j": np.array(list(range(0, cv_shape[1]))),
+                }
+            )
             end = end - 1
         if direction[1] > 0:
             self.planes_front.append({"i": np.array(list(range(start, end))), "j": np.array([0])})
         if direction[1] < 0:
-            self.planes_front.append({"i": np.array(list(range(start, end))), "j": np.array([cv_shape[1] - 1])})
+            self.planes_front.append(
+                {
+                    "i": np.array(list(range(start, end))),
+                    "j": np.array([cv_shape[1] - 1]),
+                }
+            )
 
     def next(self) -> None:
         """
@@ -83,9 +93,11 @@ class LrManager:
 
             # get invalid indexes
             indexes_invalid_i = np.where(
-                (self.planes_front[idx]["i"] < 0) + (self.planes_front[idx]["i"] >= self.cv_shape[0]))
+                (self.planes_front[idx]["i"] < 0) + (self.planes_front[idx]["i"] >= self.cv_shape[0])
+            )
             indexes_invalid_j = np.where(
-                (self.planes_front[idx]["j"] < 0) + (self.planes_front[idx]["j"] >= self.cv_shape[1]))
+                (self.planes_front[idx]["j"] < 0) + (self.planes_front[idx]["j"] >= self.cv_shape[1])
+            )
 
             # remove invalid indexes
             self.planes_front[idx]["i"] = np.delete(self.planes_front[idx]["i"], indexes_invalid_i, axis=0)
@@ -129,4 +141,4 @@ class LrManager:
         :return: previous partial cost lr
         :rtype: np.ndarray
         """
-        return self.previous_lr[num_plane] #type:ignore
+        return self.previous_lr[num_plane]  # type:ignore
