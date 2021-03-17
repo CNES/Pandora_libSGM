@@ -31,7 +31,7 @@ import libsgm_python.sgm_python as sgm
 
 
 class TestSgmPython(unittest.TestCase):
-    """"
+    """ "
     Test Python version of LibSGM
     """
 
@@ -40,19 +40,17 @@ class TestSgmPython(unittest.TestCase):
     ###############################################################
     @staticmethod
     def test_compute_lr():
-        """"
+        """ "
         Test compute lr
         """
         p1 = 3
         p2 = 4
 
-        cv_in_2d_front = np.array([[1, 2, 3, 4],  # same d
-                                   [5, 6, 7, 8],  # |d' - d| = 1
-                                   [9, 10, 11, 12]])  # |d' - d| > 1
+        cv_in_2d_front = np.array(
+            [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]  # same d  # |d' - d| = 1
+        )  # |d' - d| > 1
 
-        lr_2d_previous = np.array([[1, 1, 1, 0],
-                                   [1, 8, 2, 9],
-                                   [9, 10, 11, 1]])
+        lr_2d_previous = np.array([[1, 1, 1, 0], [1, 8, 2, 9], [9, 10, 11, 1]])
 
         p1_in_1d = p1 * np.ones(3)
         p2_in_1d = p2 * np.ones(3)
@@ -66,7 +64,7 @@ class TestSgmPython(unittest.TestCase):
         np.testing.assert_array_equal(lr_d, real_lr_d)
 
     def test_sgm_middle_value_invalid(self):
-        """"
+        """ "
         Test SGM middle value invalid
         """
         p1 = 8
@@ -83,7 +81,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_invalid_overcounting(self):
-        """"
+        """ "
         Test SGM middle value invalid overcounting
         """
         p1 = 8
@@ -99,7 +97,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_lr_0_1(self):
-        """"
+        """ "
         Test SGM middle value directions 0 1
         """
         p1 = 8
@@ -115,7 +113,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_1_0(self):
-        """"
+        """ "
         Test SGM middle value directions 1 0
         """
         p1 = 8
@@ -131,7 +129,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_0(self):
-        """"
+        """ "
         Test SGM middle value directions -1 1
         """
         p1 = 8
@@ -147,7 +145,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 18)
 
     def test_sgm_middle_value_lr_0_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions 0 -1
         """
         p1 = 8
@@ -163,7 +161,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
 
     def test_sgm_middle_value_lr_1_1(self):
-        """"
+        """ "
         Test SGM middle value directions 1 1
         """
         p1 = 8
@@ -179,7 +177,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_1(self):
-        """"
+        """ "
         Test SGM middle value directions -1 1
         """
         p1 = 8
@@ -195,7 +193,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
 
     def test_sgm_middle_value_lr_1_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions 1 -1
         """
         p1 = 8
@@ -211,7 +209,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions -1 -1
         """
         p1 = 8
@@ -227,7 +225,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value(self):
-        """"
+        """ "
         Test SGM middle value all directions
         """
         p1 = 8
@@ -243,7 +241,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 142)
 
     def test_sgm_middle_value_overcounting(self):
-        """"
+        """ "
         Test SGM middle value all directions overcounting
         """
         p1 = 8
@@ -259,7 +257,7 @@ class TestSgmPython(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 58)
 
     def test_sgm_middle_value_min_cost(self):
-        """"
+        """ "
         Test SGM middle value minimum cost
         """
         p1 = 8

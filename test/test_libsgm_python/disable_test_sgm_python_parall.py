@@ -31,7 +31,7 @@ import libsgm_python.sgm_python_parall as sgm
 
 
 class TestSgmPythonParall(unittest.TestCase):
-    """"
+    """ "
     Test Python version of LibSGM
     """
 
@@ -40,15 +40,19 @@ class TestSgmPythonParall(unittest.TestCase):
     ###############################################################
 
     def test_sgm_middle_value_invalid(self):
-        """"
+        """ "
         Test SGM middle value invalid
         """
         p1 = 8
         p2 = 32
 
-        cv_in = np.array([[[1, 15, 20], [14, 16, 6], [8, 19, 8]],
-                          [[13, 11, 3], [np.nan, np.nan, np.nan], [16, 4, 12]],
-                          [[18, 2, 17], [23, 7, 1], [5, 20, 14]]])
+        cv_in = np.array(
+            [
+                [[1, 15, 20], [14, 16, 6], [8, 19, 8]],
+                [[13, 11, 3], [np.nan, np.nan, np.nan], [16, 4, 12]],
+                [[18, 2, 17], [23, 7, 1], [5, 20, 14]],
+            ]
+        )
 
         p1_in = p1 * np.ones((3, 3, 8))
         p2_in = p2 * np.ones((3, 3, 8))
@@ -61,7 +65,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_invalid_overcounting(self):
-        """"
+        """ "
         Test SGM middle value invalid overcounting
         """
         p1 = 8
@@ -80,7 +84,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_lr_0_1(self):
-        """"
+        """ "
         Test SGM middle value directions 0 1
         """
         p1 = 8
@@ -97,7 +101,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_1_0(self):
-        """"
+        """ "
         Test SGM middle value directions 1 0
         """
         p1 = 8
@@ -115,7 +119,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_0(self):
-        """"
+        """ "
         Test SGM middle value directions -1 0
         """
         p1 = 8
@@ -132,7 +136,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 18)
 
     def test_sgm_middle_value_lr_0_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions 0 -1
         """
         p1 = 8
@@ -150,7 +154,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
 
     def test_sgm_middle_value_lr_1_1(self):
-        """"
+        """ "
         Test SGM middle value directions 1 1
         """
         p1 = 8
@@ -167,7 +171,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_1(self):
-        """"
+        """ "
         Test SGM middle value directions -1 1
         """
         p1 = 8
@@ -184,7 +188,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
 
     def test_sgm_middle_value_lr_1_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions 1 -1
         """
         p1 = 8
@@ -201,7 +205,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value_lr_minus1_minus1(self):
-        """"
+        """ "
         Test SGM middle value directions -1 -1
         """
         p1 = 8
@@ -219,7 +223,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
 
     def test_sgm_middle_value(self):
-        """"
+        """ "
         Test SGM middle value all directions
         """
         p1 = 8
@@ -237,7 +241,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 142)
 
     def test_sgm_middle_value_overcounting(self):
-        """"
+        """ "
         Test SGM middle value all directions overcounting
         """
         p1 = 8
@@ -256,7 +260,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.assertEqual(cv_out["cv"][1, 1, 1], 58)
 
     def test_sgm_middle_value_min_cost(self):
-        """"
+        """ "
         Test SGM middle value minimum cost
         """
         p1 = 8
