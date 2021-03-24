@@ -5,6 +5,7 @@
 ### Added
 
 - Version handling with setuptools_scm 
+- Add API documentation for the libsgm_python code. [#59]
 
 ## 0.3.2 (January 2021)
 
