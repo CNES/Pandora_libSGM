@@ -92,9 +92,11 @@ os.environ["CXX"] = shutil.which("g++")
 
 REQUIREMENTS = ["numpy", "nose2"]
 
+SETUP_REQUIREMENTS = ["setuptools-scm"]
+
 setup(
     name="libSGM",
-    version="x.y.z",
+    use_scm_version=True,
     description="libSGM is a CNES version of H.Hirschmuller Semi-Global Matching",
     long_description=readme(),
     long_description_content_type="text/markdown",
@@ -116,5 +118,6 @@ setup(
     entry_points={
         "libsgm": ["python_libsgm = libsgm_python.sgm_python:run_sgm"],
     },
+    setup_requires=SETUP_REQUIREMENTS,
     install_requires=REQUIREMENTS,
 )

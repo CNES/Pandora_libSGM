@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Version handling with setuptools_scm 
+
 ## 0.3.2 (January 2021)
 
 ### Changed
