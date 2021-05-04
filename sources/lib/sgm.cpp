@@ -30,7 +30,7 @@
 
 template<typename T> 
 CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, int nb_cols, int nb_disps,
-    T invalid_value, bool cost_paths, bool overcounting)
+    T invalid_value, float* segmentation, bool cost_paths, bool overcounting)
 
 {
     int nb_dir = 8;
@@ -92,6 +92,12 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, 
     int  pos0, pos1, pos2, pos3;
     // temporary variables for storing current minimums
     float min0, min1, min2, min3;
+    // temporary buffers for storing current classification
+    float * class0 = new float();
+    float * class1 = new float[nb_cols]();
+    float * class2 = new float[nb_cols]();
+    float * class3 = new float[nb_cols]();
+    float
 
     for (int row = 0; row < nb_rows; row++)
     {
@@ -648,6 +654,6 @@ void assignDirections(int* directions_in, Direction* dirs)
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
 template CostVolumes sgm(uint8_t * cv_in, uint8_t * p1_in, uint8_t * p2_in, int* directions_in,  int nb_rows,
- int nb_cols, int nb_disps, uint8_t invalid_value, bool cost_paths, bool overcounting);
+ int nb_cols, int nb_disps, uint8_t invalid_value, float* segmentation, bool cost_paths, bool overcounting);
 template CostVolumes sgm(float * cv_in, float * p1_in, float * p2_in, int* directions_in, int nb_rows, int nb_cols,
- int nb_disps, float invalid_value, bool cost_paths, bool overcounting);
+ int nb_disps, float invalid_value, float* segmentation, bool cost_paths, bool overcounting);

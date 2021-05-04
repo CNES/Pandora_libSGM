@@ -57,6 +57,7 @@ struct Penalty{
  *  \param nb_cols column number of cost volume
  *  \param nb_disps disparity number of cost volume
  *  \param invalid_value value representing invalid cost
+ *  \param segmentation segmentation map
  *  \param cost_paths True if Cost Volumes along direction are to be returned
  *  \param overcounting over-counting correction option
  *  \return cost volume aggregated, minimum cost on each direction
@@ -65,7 +66,7 @@ struct Penalty{
 
 template<typename T>
 CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, int nb_cols, int nb_disps,
-    T invalid_value, bool cost_paths, bool overcounting);
+    T invalid_value, float* segmentation, bool cost_paths, bool overcounting);
 
 /*!
  *  Update minimum

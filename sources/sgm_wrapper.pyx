@@ -131,12 +131,13 @@ cdef extern from "lib/sgm.hpp":
 
 
     CostVolumes sgm[T](T * cv_in, T * p1_in,T * p2_in , int* directions, int nb_row, int nb_col, int nb_disp, \
-        T invalid_value, bool cost_paths, bool overcounting)
+        T invalid_value, float * segmentation, bool cost_paths, bool overcounting)
 
 #Create this function is necessary. The goal is to make fused type and memory view work together
 #Avoid error as " Cannot coerce to a type that is not specialized"
 def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memview, my_cv_type[:,:,::1] p2_in_memview, \
-         int[:,::1] directions, my_cv_type invalid_value, bool cost_paths, bool overcounting):
+         int[:,::1] directions, my_cv_type invalid_value, float[:,::1] segmentation_memview, bool cost_paths, \
+                                                                                           bool overcounting):
     """
     Internal function. Wrap the call of sgm C function.
 
@@ -150,6 +151,8 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
     :type directions: 2D array
     :param invalid value: value representing invalid cost
     :type invalid_value: uint8 or float
+    :param segmentation_memview: segmentation
+    :type segmentation_memview:  2D array contiguous memoryview
     :param cost_paths: True if Cost Volumes along direction are to be returned
     :type cost_paths: bool
     :param overcounting: over-counting correction option
@@ -166,7 +169,8 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
 
     #Calling C function
     cv_out = sgm(&cv_in_memview[0,0,0], &p1_in_memview[0,0,0], &p2_in_memview[0,0,0], &directions[0,0], nb_row, \
-                                    nb_col,  nb_disp, invalid_value, cost_paths, overcounting)
+                                    nb_col,  nb_disp, invalid_value, &segmentation_memview[0,0], cost_paths, \
+                                                                      overcounting)
 
     # Build Python object which is an numpy array, data coming from the Cn pointer
     cdef np.ndarray ndarray_out_cv
@@ -199,8 +203,8 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
     return cv
 
 
-def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None, invalid_value, cost_paths = False, \
-                                                                       overcounting = False):
+def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None, invalid_value, segmentation not None, \
+                                                                       cost_paths = False, overcounting = False):
     """
     Compute aggregated cost volume using C++ library where sgm method is implemented
 
@@ -214,6 +218,8 @@ def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None,
     :type directions: 2D array
     :param invalid value: value representing invalid cost
     :type invalid value: uint8 or float
+    :param segmentation: segmentation
+    :type segmentation:  2D array contiguous
     :param cost_paths: True if Cost Volumes along direction are to be returned
     :type cost_paths: bool
     :param overcounting: over-counting correction option
@@ -223,6 +229,6 @@ def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None,
     """
 
     #Calling wrapper
-    ndarray_out = sgm_call(cv_in, p1_in, p2_in, direction,  invalid_value, cost_paths, overcounting)
+    ndarray_out = sgm_call(cv_in, p1_in, p2_in, direction,  invalid_value, segmentation, cost_paths, overcounting)
 
     return ndarray_out
