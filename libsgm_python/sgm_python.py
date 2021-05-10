@@ -33,6 +33,7 @@ def run_sgm(
     p1_in: np.ndarray,
     p2_in: np.ndarray,
     directions: np.ndarray,
+    segmentation: np.ndarray,
     cost_paths: bool = False,
     overcounting: bool = False,
 ):
@@ -47,6 +48,8 @@ def run_sgm(
     :type p2_in:  3D np.ndarray
     :param directions: directions used in SGM
     :type directions: 2D np.ndarray
+    :param segmentation: segmentation for piecewise optimization
+    :type segmentation: 2D np.ndarray
     :param cost_paths: True if Cost Volumes along direction are to be returned
     :type cost_paths: bool
     :param overcounting: over-counting correction option
@@ -67,6 +70,7 @@ def run_sgm(
         nb_planes = len(lr_manager.planes_front)
         while nb_planes > 0:
             current_lr = []
+            current_segm = []
 
             for p_idx in range(nb_planes):
                 front_plane = lr_manager.planes_front[p_idx]
@@ -75,9 +79,13 @@ def run_sgm(
                     partial_lr = cv_in[front_plane["i"], front_plane["j"], :]
                     cv_out["cv"][front_plane["i"], front_plane["j"], :] += partial_lr
                     current_lr.append(partial_lr)
+                    partial_segm = segmentation[front_plane["i"], front_plane["j"]]
+                    current_segm.append(partial_segm)
                 else:
                     partial_lr = np.zeros(cv_in[front_plane["i"], front_plane["j"], :].shape)
                     previous_lr = lr_manager.get_previous_lr(p_idx)
+                    previous_segm = lr_manager.get_previous_segm(p_idx)
+                    partial_segm = segmentation[front_plane["i"], front_plane["j"]]
                     for idx in range(cv_in.shape[2]):
                         partial_lr[:, idx] = compute_lr(
                             cv_in[front_plane["i"], front_plane["j"], :],
@@ -85,15 +93,19 @@ def run_sgm(
                             idx,
                             p1_in[front_plane["i"], front_plane["j"], idx_dir],
                             p2_in[front_plane["i"], front_plane["j"], idx_dir],
+                            partial_segm,
+                            previous_segm,
                         )
 
                     cv_out["cv"][front_plane["i"], front_plane["j"]] += partial_lr
                     current_lr.append(partial_lr)
+                    current_segm.append(partial_segm)
 
                 if cost_paths:
                     cv_out["cv_min"][front_plane["i"], front_plane["j"], idx_dir] = np.argmin(partial_lr, axis=1)
 
             lr_manager.set_current_lr(current_lr)
+            lr_manager.set_current_segm(current_segm)
 
             # compute next planes
             lr_manager.next()  # pylint:disable=not-callable
@@ -111,6 +123,8 @@ def compute_lr(
     disp: int,
     p1_in_1d: np.ndarray,
     p2_in_1d: np.ndarray,
+    current_segm_1d: np.ndarray,
+    previous_segm_1d: np.ndarray,
 ):
     """
     Compute Lr of current plane, at a given disparity
@@ -125,6 +139,10 @@ def compute_lr(
     :type p1_in_1d: np.ndarray
     :param p2_in_1d: p2 penalties, dim=1
     :type p2_in_1d: np.ndarray
+    :param current_segm_1d: current segmentation
+    :type current_segm_1d: np.ndarray
+    :param previous_segm_1d:  previous segmentation
+    :type previous_segm_1d: np.ndarray
     :return: partial lrs
     :rtype: np.ndarray
     """
@@ -143,4 +161,7 @@ def compute_lr(
     min_previous_lr_penalties[indexes_nan] = 0
     min_previous_lr[indexes_nan] = 0
 
-    return cv_in_2d_front[:, disp] + min_previous_lr_penalties - min_previous_lr
+    # reset if different class
+    reset = current_segm_1d == previous_segm_1d
+
+    return cv_in_2d_front[:, disp] + reset * (min_previous_lr_penalties - min_previous_lr)

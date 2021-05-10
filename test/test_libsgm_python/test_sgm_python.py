@@ -58,9 +58,42 @@ class TestSgmPython(unittest.TestCase):
         # disp
         disp = 1
 
-        lr_d = sgm.compute_lr(cv_in_2d_front, lr_2d_previous, disp, p1_in_1d, p2_in_1d)
+        # segm
+        current_segm = np.ones(3)
+        previous_segm = np.ones(3)
+
+        lr_d = sgm.compute_lr(cv_in_2d_front, lr_2d_previous, disp, p1_in_1d, p2_in_1d, current_segm, previous_segm)
 
         real_lr_d = np.array([3, 9, 14])
+        np.testing.assert_array_equal(lr_d, real_lr_d)
+
+    @staticmethod
+    def test_compute_lr_reset_history():
+        """ "
+        Test compute lr
+        """
+        p1 = 3
+        p2 = 4
+
+        cv_in_2d_front = np.array(
+            [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]  # same d  # |d' - d| = 1
+        )  # |d' - d| > 1
+
+        lr_2d_previous = np.array([[1, 1, 1, 0], [1, 8, 2, 9], [9, 10, 11, 1]])
+
+        p1_in_1d = p1 * np.ones(3)
+        p2_in_1d = p2 * np.ones(3)
+
+        # disp
+        disp = 1
+
+        # segm
+        current_segm = np.ones(3)
+        previous_segm = np.zeros(3)
+
+        lr_d = sgm.compute_lr(cv_in_2d_front, lr_2d_previous, disp, p1_in_1d, p2_in_1d, current_segm, previous_segm)
+
+        real_lr_d = np.array([2, 6, 10])
         np.testing.assert_array_equal(lr_d, real_lr_d)
 
     def test_sgm_middle_value_invalid(self):
@@ -75,7 +108,9 @@ class TestSgmPython(unittest.TestCase):
 
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
@@ -91,7 +126,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=True)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=True)
 
         # invalid value : nan
         self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
@@ -107,7 +144,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
@@ -123,7 +162,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[1, 0]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
@@ -139,7 +180,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[-1, 0]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 18)
@@ -155,7 +198,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, -1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
@@ -171,7 +216,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
@@ -187,7 +234,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 12)
@@ -203,7 +252,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[1, -1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
@@ -219,7 +270,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[-1, -1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 20)
@@ -235,10 +288,31 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 142)
+
+    def test_sgm_middle_value_reset_middle(self):
+        """ "
+        Test SGM middle value all directions with a reset in middle
+        """
+        p1 = 8
+        p2 = 32
+        cv_in = common.cv_in
+        p1_in = p1 * np.ones((3, 3, 8))
+        p2_in = p2 * np.ones((3, 3, 8))
+        directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
+
+        segmentation = np.ones((3, 3))
+        segmentation[1, 1] = 2
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
+
+        # invalid value : nan
+        self.assertEqual(cv_out["cv"][1, 1, 1], 96)
 
     def test_sgm_middle_value_overcounting(self):
         """ "
@@ -251,7 +325,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=False, overcounting=True)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=True)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 58)
@@ -267,7 +343,9 @@ class TestSgmPython(unittest.TestCase):
         p2_in = p2 * np.ones((3, 3, 8))
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, cost_paths=True, overcounting=False)
+        segmentation = np.ones((3, 3))
+
+        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=True, overcounting=False)
 
         # invalid value : nan
         self.assertEqual(cv_out["cv"][1, 1, 1], 142)
