@@ -41,7 +41,6 @@ TEST(sgmTest, TestMiddleValueInvalid){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	// method : constant
 	uint8_t p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
@@ -74,7 +73,6 @@ TEST(sgmTest, TestMiddleValueInvalidOvercounting){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	// method : constant
 	uint8_t p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
@@ -104,7 +102,6 @@ TEST(sgmTest, TestMiddleValue_cost_paths){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	bool overcounting = false;
 	bool cost_paths = true;
@@ -141,7 +138,6 @@ TEST(sgmTest, TestMiddleValue){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	// method : constant
 	uint8_t p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
@@ -173,7 +169,6 @@ TEST(sgmTest, TestMiddleValueResetHistory){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	// method : constant
 	uint8_t p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
@@ -182,7 +177,6 @@ TEST(sgmTest, TestMiddleValueResetHistory){
 
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 2, 1, 1, 1, 1}; // piecewise optimization at the middle
-    //float segmentation[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // piecewise optimization at the middle
 
 	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 
@@ -208,7 +202,6 @@ TEST(sgmTest, TestMiddleValueOvercounting){
 
 	CostVolumes cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
-	float im_ref[9]={0,0,0,0,0,0,0,0,0};
 
 	// method : constant
 	uint8_t p1[9*8]={P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1,P1};
