@@ -96,16 +96,19 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
  *  \param P1 penalty P1 from sgm equation
  *  \param P2 penalty P2 from sgm equation
  *  \param direction array of struct containing coordinates of previous point
- *  \param buff0 buffer containing previois aggregated cost (previous point)
+ *  \param buff0 buffer containing previous aggregated cost (previous point)
  *  \param min_disp0 value of minimum cost at the previous pixel
  *  \param pixel_0 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class0 buffer containing previous class (previous point
+ *  \param reset0 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff0, T * min_disp0, T * pixel_0);
+    T * buff0, T * min_disp0, T * pixel_0, float current_class, float & buff_class0, float & reset0);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -126,13 +129,16 @@ T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_
  *  \param buff1 buffer containing previois aggregated cost (previous line)
  *  \param min_disp1 value of minimum cost at the previous pixel
  *  \param pixel_1 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class1 buffer containing previous class (previous point
+ *  \param reset1 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T> 
 T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff1, T * min_disp1, T * pixel_1);
+    T * buff1, T * min_disp1, T * pixel_1, float current_class, float * buff_class1, float & reset1);
 /*!
  *  \brief  Compute aggregated cost volume
  *   Compute aggregated cost at one point
@@ -153,13 +159,16 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
  *  \param buff_disp_2 buffer containing previous aggregated point
  *  \param min_disp2 value of minimum cost at the previous pixel
  *  \param pixel_2 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class2 buffer containing previous class (previous point
+ *  \param reset2 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T> 
 T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff2, T * buff_disp_2, T * min_disp2, T * pixel_2);
+    T * buff2, T * buff_disp_2, T * min_disp2, T * pixel_2, float current_class, float * buff_class2, float & reset2);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -179,13 +188,16 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
  *  \param direction array of struct containing coordinates of previous point
  *  \param buff3 buffer containing previous aggregated cost (previous line)
  *  \param min_disp3 value of minimum cost at the previous pixel
+ *  \param current_class current class
+ *  \param buff_class3 buffer containing previous class (previous point
+ *  \param reset3 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T> 
 T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff3, T * min_disp3);
+    T * buff3, T * min_disp3, float current_class, float * buff_class3, float & reset3);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -206,13 +218,16 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
  *  \param buff4 buffer containing previois aggregated cost (previous point)
  *  \param min_disp4 value of minimum cost at the previous pixel
  *  \param pixel_4 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class4 buffer containing previous class (previous point
+ *  \param reset4 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T> 
 T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff4, T * min_disp4, T * pixel_4);
+    T * buff4, T * min_disp4, T * pixel_4, float current_class, float buff_class4, float & reset4);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -233,13 +248,16 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
  *  \param buff5 buffer containing previois aggregated cost (previous line)
  *  \param min_disp5 value of minimum cost at the previous pixel
  *  \param pixel_5 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class5 buffer containing previous class (previous point
+ *  \param reset5 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T> 
 T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff5, T * min_disp5, T * pixel_5);
+    T * buff5, T * min_disp5, T * pixel_5, float current_class, float * buff_class5, float & reset5);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -261,13 +279,16 @@ T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T inva
  *  \param buff_disp_6 buffer containing previous aggregated point
  *  \param min_disp6 value of minimum cost at the previous pixel
  *  \param pixel_6 value of previous disp on the buffer
+ *  \param current_class current class
+ *  \param buff_class6 buffer containing previous class (previous point
+ *  \param reset6 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T>
 T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff6, T * buff_disp_6, T * min_disp6, T * pixel_6);
+    T * buff6, T * buff_disp_6, T * min_disp6, T * pixel_6, float current_class, float * buff_class6, float & reset6);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -287,12 +308,16 @@ T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T inva
  *  \param direction array of struct containing coordinates of previous point
  *  \param buff7 buffer containing previous aggregated cost (previous line)
  *  \param min_disp7 value of minimum cost at the previous pixel
+ *  \param current_class current class
+ *  \param buff_class7 buffer containing previous class (previous point
+ *  \param reset7 value of coefficient to multiply history
  *  \return cost aggregated point
  */
 
 template<typename T>
 T aggregatedCostFromBottomRight7(T pixelCost, int row, int col, int disp, T invalid_value,
-    int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,T * buff7, T * min_disp7);
+    int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,T * buff7, T * min_disp7,
+    float current_class, float * buff_class7, float & reset7);
 
 /*!
  *  \brief  Apply penalties
