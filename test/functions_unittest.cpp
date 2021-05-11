@@ -506,7 +506,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValue) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class1[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -539,7 +539,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValueResetHistory) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {0,1,1,1,1}; // different class for no piecewise optimization
+	float buff_class1[5] = {0,1,1,1,1}; // different class for no piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -575,7 +575,7 @@ TEST(aggregatedCostFromTopLeft1Test, findMinDisp) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class1[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -613,7 +613,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregation) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class1[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -651,7 +651,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class1[5] = {1,1,1,1,1}; // unused
 	float reset1 = 0;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -689,7 +689,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,2,1,1,1}; // different class for  piecewise optimization
+	float buff_class1[5] = {1,2,1,1,1}; // different class for  piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -727,7 +727,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class1 = 1;
-	float buff_class1[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class1[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset1 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -765,7 +765,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValue) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class2[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset2 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -799,7 +799,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValueResetHistory) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class2[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset2 = 0;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -836,7 +836,7 @@ TEST(aggregatedCostFromTopLeft2Test, findMinDisp) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class2[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset2 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -877,7 +877,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregation) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class2[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset2 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -917,7 +917,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class2[5] = {1,1,1,1,1}; // unused
 	float reset2 = 0;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -957,7 +957,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {2,1,1,1,1}; // different for  piecewise optimization
+	float buff_class2[5] = {2,1,1,1,1}; // different for  piecewise optimization
 	float reset2 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -996,7 +996,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class2 = 1;
-	float buff_class2[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class2[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset2 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1033,7 +1033,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValue) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset3 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1065,7 +1065,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValueResetHistory) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset3 = 0;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1100,7 +1100,7 @@ TEST(aggregatedCostFromTopLeft3Test, findMinDisp) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset3 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1139,7 +1139,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregation) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset3 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1176,7 +1176,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class3[5] = {1,1,1,1,1}; // unused
 	float reset3 = 0;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1214,7 +1214,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,2}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,2}; // same class for no piecewise optimization
 	float reset3 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1251,7 +1251,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class3 = 1;
-	float buff_class3[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class3[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset3 = 1;
 
 	uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1549,7 +1549,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValue) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class5[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset5 = 1;
 
 
@@ -1583,7 +1583,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValueResetHistory) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class5[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset5 = 0;
 
 
@@ -1620,7 +1620,7 @@ TEST(aggregatedCostFromBottomRight5Test, findMinDisp) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class5[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset5 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1658,7 +1658,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregation) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class5[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset5 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1695,7 +1695,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class5[5] = {1,1,1,1,1}; // unused
 	float reset5 = 0;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1732,7 +1732,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,2,1}; // different class
+	float buff_class5[5] = {1,1,1,2,1}; // different class
 	float reset5 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1769,7 +1769,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class5 = 1;
-	float buff_class5[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class5[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset5 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1807,7 +1807,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValue) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class6[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset6 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1841,7 +1841,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValueResetHistory) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class6[5] = {1,1,1,1,1}; // unused
 	float reset6 = 0;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1878,7 +1878,7 @@ TEST(aggregatedCostFromBottomRight6Test, findMinDisp) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class6[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset6 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1919,7 +1919,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregation) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class6[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset6 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1959,7 +1959,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class6[5] = {1,1,1,1,1}; // unused
 	float reset6 = 0;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -1999,7 +1999,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,2}; // same class for no piecewise optimization ( diagonal from left, but array is  reversed)
+	float buff_class6[5] = {1,1,1,1,2}; // same class for no piecewise optimization ( diagonal from left, but array is  reversed)
 	float reset6 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2038,7 +2038,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class6 = 1;
-	float buff_class6[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class6[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset6 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2074,7 +2074,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValue) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class7[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset7 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2107,7 +2107,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValueResetHistory) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class7[5] = {1,1,1,1,1}; // unused
 	float reset7 = 0;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2143,7 +2143,7 @@ TEST(aggregatedCostFromBottomRight7Test, findMinDisp) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class7[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset7 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2181,7 +2181,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregation) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class7[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset7 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2218,7 +2218,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp1) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // unused
+	float buff_class7[5] = {1,1,1,1,1}; // unused
 	float reset7 = 0;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2255,7 +2255,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp0) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {2,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class7[5] = {2,1,1,1,1}; // same class for no piecewise optimization
 	float reset7 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
@@ -2292,7 +2292,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationAfterInvalidPoint) {
 
 	// class variables
 	float class7 = 1;
-	float buff_class7[nb_cols] = {1,1,1,1,1}; // same class for no piecewise optimization
+	float buff_class7[5] = {1,1,1,1,1}; // same class for no piecewise optimization
 	float reset7 = 1;
 
 	uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
