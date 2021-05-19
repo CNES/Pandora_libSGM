@@ -130,8 +130,8 @@ cdef extern from "lib/sgm.hpp":
 
 
 
-    CostVolumes sgm[T](T * cv_in, T * p1_in,T * p2_in , int* directions, int nb_row, int nb_col, int nb_disp, \
-        T invalid_value, bool cost_paths, bool overcounting)
+    CostVolumes sgm[T](T * cv_in, T * p1_in,T * p2_in , int* directions, unsigned long int nb_row,
+        unsigned long int nb_col, unsigned int nb_disp, T invalid_value, bool cost_paths, bool overcounting)
 
 #Create this function is necessary. The goal is to make fused type and memory view work together
 #Avoid error as " Cannot coerce to a type that is not specialized"

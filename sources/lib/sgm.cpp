@@ -28,18 +28,18 @@
 #include "sgm.hpp"
 
 
-template<typename T> 
-CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, int nb_cols, int nb_disps,
-    T invalid_value, bool cost_paths, bool overcounting)
+template<typename T>
+CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
+    unsigned int nb_disps, T invalid_value, bool cost_paths, bool overcounting)
 
 {
     int nb_dir = 8;
-    CostVolumes cvs;
     //Allocate final cost volume
+    CostVolumes cvs;
+    // To avoid an overflow due to big multiplications, nb_rows and nb_cols are defined as long int
     cvs.cost_volume = new float[nb_rows*nb_cols*nb_disps]();
-
     // Allocate costs
-    int nb_values=1;
+    unsigned long int nb_values=1;
     if (cost_paths){
     nb_values = nb_rows*nb_cols*nb_dir;
     }
@@ -154,7 +154,7 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, 
     delete [] buff2;
     delete [] buff3;
     delete [] buff_disp_2;
-    
+
     /* ------------------*/
     /* -- Second pass -- */
     /* ------------------*/
@@ -267,7 +267,7 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
     }
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff0, T * min_disp0, T * pixel_0)
@@ -314,7 +314,7 @@ T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_
     return costAggr0;
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff1, T * min_disp1, T * pixel_1)
@@ -360,7 +360,7 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
 
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff2, T * buff_disp_2, T * min_disp2, T * pixel_2)
@@ -407,7 +407,7 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
     return costAggr2;
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff3, T * min_disp3)
@@ -447,7 +447,7 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
     return costAggr3;
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff4, T * min_disp4, T * pixel_4)
@@ -492,7 +492,7 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
     return costAggr4;
 }
 
-template<typename T> 
+template<typename T>
 T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
     T * buff5, T * min_disp5, T * pixel_5)
@@ -647,7 +647,7 @@ void assignDirections(int* directions_in, Direction* dirs)
 }
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
-template CostVolumes sgm(uint8_t * cv_in, uint8_t * p1_in, uint8_t * p2_in, int* directions_in,  int nb_rows,
- int nb_cols, int nb_disps, uint8_t invalid_value, bool cost_paths, bool overcounting);
-template CostVolumes sgm(float * cv_in, float * p1_in, float * p2_in, int* directions_in, int nb_rows, int nb_cols,
- int nb_disps, float invalid_value, bool cost_paths, bool overcounting);
+template CostVolumes sgm(uint8_t * cv_in, uint8_t * p1_in, uint8_t * p2_in, int* directions_in, unsigned long int nb_rows,
+unsigned long int nb_cols,unsigned int nb_disps, uint8_t invalid_value, bool cost_paths, bool overcounting);
+template CostVolumes sgm(float * cv_in, float * p1_in, float * p2_in, int* directions_in, unsigned long int nb_rows,
+unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, bool cost_paths, bool overcounting);
