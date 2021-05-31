@@ -8,6 +8,10 @@
 - Add API documentation for the libsgm_python code. [#59]
 - Add piecewise optimization. [#62]
 
+### Fixed
+
+- Fix memory allocation error with large images. [#47]
+
 ## 0.3.2 (January 2021)
 
 ### Changed
