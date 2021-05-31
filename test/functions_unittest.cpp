@@ -558,7 +558,7 @@ TEST(aggregatedCostFromTopLeft1Test, findMinDisp) {
 	uint8_t pixelCost = 15 ;
 	uint8_t P1 = 8;
 	uint8_t P2 = 32;
-	Direction direction={0,1};
+	Direction direction={1,0};
 	uint8_t invalid_value = 57;
 
 	int row = 1;
@@ -596,7 +596,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregation) {
 	uint8_t pixelCost = 15 ;
 	uint8_t P1 = 8 ;
 	uint8_t P2 = 32 ;
-	Direction direction={0,1};
+	Direction direction={1,0};
 	uint8_t invalid_value = 57;
 
 	int row = 1;
@@ -634,7 +634,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp1) {
 	uint8_t pixelCost = 15 ;
 	uint8_t P1 = 8 ;
 	uint8_t P2 = 32 ;
-	Direction direction={0,1};
+	Direction direction={1,0};
 	uint8_t invalid_value = 57;
 
 	int row = 1;
@@ -672,7 +672,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp0) {
 	uint8_t pixelCost = 15 ;
 	uint8_t P1 = 8 ;
 	uint8_t P2 = 32 ;
-	Direction direction={0,1};
+	Direction direction={1,0};
 	uint8_t invalid_value = 57;
 
 	int row = 1;
@@ -710,7 +710,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationAfterInvalidPoint) {
 	uint8_t pixelCost = 15 ;
 	uint8_t P1 = 8;
 	uint8_t P2 = 32;
-	Direction direction={0,1};
+	Direction direction={1,0};
 	uint8_t invalid_value = 57;
 
 	int row = 1;

@@ -108,7 +108,7 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
 template<typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff0, T * min_disp0, T * pixel_0, float current_class, float & buff_class0, float & reset0);
+    T * buff0, T * min_disp0, T * pixel_0, float current_class, float buff_class0, float & reset0);
 
 /*!
  *  \brief  Compute aggregated cost volume

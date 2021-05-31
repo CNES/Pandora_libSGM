@@ -94,9 +94,13 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long
     float min0, min1, min2, min3;
     // temporary buffers for storing current classification
     float current_class;
+    // buff_class0 stores the class from the left of current pixel (previous seen pixel)
     float buff_class0;
+    // tmp_buff_class1_2_3 stores the previous classes of pixels seen in the line
     float * tmp_buff_class1_2_3 = new float[nb_cols]();
+    // buff_class1_2_3 stores the previous line of classes
     float * buff_class1_2_3 = new float[nb_cols]();
+    // reset variables store 0 if we want to reset history, 1 if not
     float reset0;
     float reset1;
     float reset2;
@@ -198,9 +202,13 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long
     float min4, min5, min6, min7;
 
     // temporary buffers for storing current classification
+    // buff_class4 stores the class from the right of current pixel (previous seen pixel)
     float buff_class4;
+    // buff_class5_6_7 stores the previous line of classes
     float * buff_class5_6_7 = new float[nb_cols]();
+    // tmp_buff_class5_6_7 stores the previous classes of pixels seen in the line
     float * tmp_buff_class5_6_7 = new float[nb_cols]();
+    // reset variables store 0 if we want to reset history, 1 if not
     float reset4;
     float reset5;
     float reset6;
@@ -319,7 +327,7 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
 template<typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff0, T * min_disp0, T * pixel_0, float current_class, float & buff_class0, float &reset0)
+    T * buff0, T * min_disp0, T * pixel_0, float current_class, float buff_class0, float &reset0)
 {
 
     //Pixel cost at the point (row,col,disp)
@@ -385,7 +393,7 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
         {
             *min_disp1 = *std::min_element(&buff1[disp+col*nb_disps], &buff1[nb_disps + col*nb_disps]);
             // if classes are different, reset history
-            reset1 = current_class == buff_class1[col];
+            reset1 = current_class == buff_class1[col-direction.dcol];
         }
         /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
         So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -434,7 +442,7 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
         {
             *min_disp2 = *std::min_element(&buff_disp_2[disp], &buff_disp_2[nb_disps]);
             // if classes are different, reset history
-            reset2 = current_class == buff_class2[col-1];
+            reset2 = current_class == buff_class2[col-direction.dcol];
         }
         /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
         So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -574,7 +582,7 @@ T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T inva
         {
             *min_disp5 = *std::min_element(&buff5[disp+col*nb_disps], &buff5[nb_disps + col*nb_disps]);
             // if classes are different, reset history
-            reset5 = current_class == buff_class5[col];
+            reset5 = current_class == buff_class5[col-direction.dcol];
         }
         /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
         So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
