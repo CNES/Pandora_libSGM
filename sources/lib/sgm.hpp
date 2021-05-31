@@ -64,8 +64,8 @@ struct Penalty{
 
 
 template<typename T>
-CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, int nb_rows, int nb_cols, int nb_disps,
-    T invalid_value, bool cost_paths, bool overcounting);
+CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
+ unsigned int nb_disps, T invalid_value, bool cost_paths, bool overcounting);
 
 /*!
  *  Update minimum
