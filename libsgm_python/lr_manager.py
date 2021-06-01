@@ -55,6 +55,10 @@ class LrManager:
         self.current_lr = None
         self.previous_lr = None
 
+        # store partial segm
+        self.current_segm = None
+        self.previous_segm = None
+
         # start and end indices to manage duplicated corners when two planes are used
         start = 0
         end = cv_shape[0]
@@ -86,6 +90,7 @@ class LrManager:
         """
         self.planes_previous = copy.deepcopy(self.planes_front)
         self.previous_lr = self.current_lr
+        self.previous_segm = self.current_segm
         delete_items_indexes = []
         for idx in range(len(self.planes_front)):
             self.planes_front[idx]["i"] += self.dir[0]
@@ -116,12 +121,21 @@ class LrManager:
                     self.previous_lr[idx] = np.delete(self.previous_lr[idx], indexes_invalid_i, axis=0)
                     self.previous_lr[idx] = np.delete(self.previous_lr[idx], indexes_invalid_j, axis=0)
 
+                # delete in stored segm, as list are of size (1) (n) or (m) (1), only one delete is effective
+
+                if self.previous_segm is not None:
+                    print(self.previous_segm[idx])
+                    self.previous_segm[idx] = np.delete(self.previous_segm[idx], indexes_invalid_i, axis=0)
+                    self.previous_segm[idx] = np.delete(self.previous_segm[idx], indexes_invalid_j, axis=0)
+
         # delete items
         for idx in sorted(delete_items_indexes, reverse=True):
             self.planes_front.pop(idx)
             self.planes_previous.pop(idx)
             if self.previous_lr is not None:
                 self.previous_lr.pop(idx)
+            if self.previous_segm is not None:
+                self.previous_segm.pop(idx)
 
     def set_current_lr(self, lr_s: np.ndarray) -> None:
         """
@@ -142,3 +156,23 @@ class LrManager:
         :rtype: np.ndarray
         """
         return self.previous_lr[num_plane]  # type:ignore
+
+    def set_current_segm(self, segm_s: np.ndarray) -> None:
+        """
+        Set current segmentation
+
+        :param lr_s: partial segmentation
+        :type lr_s:  np.ndarray
+        """
+        self.current_segm = segm_s
+
+    def get_previous_segm(self, num_plane: int) -> np.ndarray:
+        """
+        Get previous  segmentation
+
+        :param num_plane: numero of plane
+        :type num_plane:  int
+        :return: previous partial segmentation
+        :rtype: np.ndarray
+        """
+        return self.previous_segm[num_plane]  # type:ignore

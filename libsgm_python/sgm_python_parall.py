@@ -36,6 +36,7 @@ def run_sgm_parall(
     p1_in: np.ndarray,
     p2_in: np.ndarray,
     directions: np.ndarray,
+    segmentation: np.ndarray,
     cost_paths: bool = False,
     overcounting: bool = False,
 ):
@@ -50,6 +51,8 @@ def run_sgm_parall(
     :type p2_in:  3D np.ndarray
     :param directions: directions used in SGM
     :type directions: 2D np.ndarray
+    :param segmentation: segmentation for piecewise optimization
+    :type segmentation: 2D np.ndarray
     :param cost_paths: True if Cost Volumes along direction are to be returned
     :type cost_paths: bool
     :param overcounting: over-counting correction option
@@ -61,7 +64,7 @@ def run_sgm_parall(
     # Compute initial points
     # [i0, j0, di, dj, num_dir]
     starting_points = []
-    for idx, dir_ in np.enumerate(directions):
+    for idx, dir_ in enumerate(directions):
         # optimize this direction
         lr_manager = LrManager(cv_in.shape, dir_)
 
@@ -78,7 +81,7 @@ def run_sgm_parall(
     for i in range(len(directions)):
         dir_str.append(str(i))
     dir_str = np.array(dir_str)
-    cv_out = compute_costs(np.array(starting_points), cv_in, p1_in, p2_in, dir_str, cost_paths=cost_paths)
+    cv_out = compute_costs(np.array(starting_points), cv_in, p1_in, p2_in, dir_str, segmentation, cost_paths=cost_paths)
 
     if overcounting:
         cv_out["cv"] -= (len(directions) - 1) * cv_in
@@ -93,6 +96,7 @@ def compute_costs(
     p1_in: np.ndarray,
     p2_in: np.ndarray,
     dir_str: np.ndarray,
+    segmentation: np.ndarray,
     cost_paths: bool = False,
 ):
     """
@@ -108,6 +112,8 @@ def compute_costs(
     :type p2_in:  3D np.ndarray
     :param dir_str: list of direction names
     :type dir_str:  List
+    :param segmentation: segmentation for piecewise optimization
+    :type segmentation: 2D np.ndarray
     :param cost_paths: True if Cost Volumes along direction are to be returned
     :type cost_paths: bool
     :return: the aggregated cost volume and the minimum cost along directions
@@ -116,7 +122,7 @@ def compute_costs(
     in_shape = cv_in.shape
     cv = {"cv": np.zeros(in_shape)}
 
-    for idx, dir_ in np.enumerate(dir_str):
+    for idx, dir_ in enumerate(dir_str):
         name = "cv_" + dir_
         cv[name] = np.zeros(in_shape)
 
@@ -135,6 +141,7 @@ def compute_costs(
         cv["cv"][i_0, j_0, :] += cv_in[i_0, j_0, :].copy()
         cv[name][i_0, j_0, :] += cv_in[i_0, j_0, :].copy()
         previous_lr = cv_in[i_0, j_0, :].copy()
+        previous_segm = segmentation[i_0, j_0]
 
         i = i_0 + d_i
         j = j_0 + d_j
@@ -142,6 +149,7 @@ def compute_costs(
         while 0 <= i < in_shape[0] and 0 <= j < in_shape[1]:
 
             current_lr = cv_in[i, j, :].copy()
+            current_segm = segmentation[i, j]
 
             p1 = p1_in[i, j, dir_p]
             p2 = p2_in[i, j, dir_p]
@@ -153,7 +161,7 @@ def compute_costs(
 
                 val = np.nanmin(penalties + previous_lr) - np.nanmin(previous_lr)
                 if not np.isnan(val):
-                    current_lr[dir_in] += val
+                    current_lr[dir_in] += val * (current_segm == previous_segm)
 
             # save current lr
             cv["cv"][i, j, :] += current_lr
@@ -161,6 +169,7 @@ def compute_costs(
 
             # next pixel
             previous_lr = current_lr
+            previous_segm = current_segm
 
             cv_min[i, j, dir_p] = np.argmin(current_lr)
 

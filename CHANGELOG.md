@@ -6,6 +6,7 @@
 
 - Version handling with setuptools_scm 
 - Add API documentation for the libsgm_python code. [#59]
+- Add piecewise optimization. [#62]
 
 ### Fixed
 
