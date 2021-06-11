@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0 (June 2021)
+
 ### Added
 
 - Version handling with setuptools_scm 
