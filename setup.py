@@ -28,17 +28,11 @@ and setup elements to configure and identify the software.
 
 import os
 import shutil
-from codecs import open as opn
+import numpy
+from codecs import open as copen
 
 from setuptools import setup, find_packages
 
-try:
-    import numpy
-except ImportError:
-    print("")
-    print("WARNING ! Installation of numpy is required before libSGM installation")
-    print("")
-    raise
 
 try:
     from Cython.Distutils.extension import Extension
@@ -90,24 +84,14 @@ except ImportError:
 os.environ["CC"] = shutil.which("gcc")
 os.environ["CXX"] = shutil.which("g++")
 
-REQUIREMENTS = ["numpy", "nose2"]
+def readme():
+    with copen("README.md", "r", "utf-8") as fstream:
+        return fstream.read()
 
-SETUP_REQUIREMENTS = ["setuptools-scm"]
 
 setup(
-    name="libSGM",
     use_scm_version=True,
-    description="libSGM is a CNES version of H.Hirschmuller Semi-Global Matching",
     long_description=readme(),
-    long_description_content_type="text/markdown",
-    url="https://github.com/CNES/Pandora_libsgm",
-    author="CNES",
-    author_email="myriam.cournet@cnes.fr",
-    license="Apache License 2.0",
-    zip_safe=False,
-    packages=find_packages(),
-    ext_modules=extensions,
-    cmdclass=CMDCLASS,
     command_options={
         "build_sphinx": {
             "build_dir": ("setup.py", "doc/build/"),
@@ -115,9 +99,6 @@ setup(
             "warning_is_error": ("setup.py", True),
         }
     },
-    entry_points={
-        "libsgm": ["python_libsgm = libsgm_python.sgm_python:run_sgm"],
-    },
-    setup_requires=SETUP_REQUIREMENTS,
-    install_requires=REQUIREMENTS,
+    zip_safe=False,
+    ext_modules=extensions,
 )
