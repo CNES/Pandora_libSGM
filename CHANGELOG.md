@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.2 (January 2022)
+
+### Fixed
+
+- Correct entry point name. [#65]
+
 ## 0.4.1 (December 2021)
 
 ### Changed
