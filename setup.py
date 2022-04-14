@@ -28,11 +28,9 @@ and setup elements to configure and identify the software.
 
 import os
 import shutil
-import numpy
 from codecs import open as copen
-
-from setuptools import setup, find_packages
-
+import numpy
+from setuptools import setup
 
 try:
     from Cython.Distutils.extension import Extension
@@ -47,12 +45,6 @@ else:
     USING_CYTHON = True
 
 CMDCLASS = {"build_ext": build_ext}
-
-
-def readme():
-    with opn("README.md", "r", "utf-8") as file:
-        return file.read()
-
 
 SCR_DIR = "sources"
 
@@ -84,6 +76,7 @@ except ImportError:
 os.environ["CC"] = shutil.which("gcc")
 os.environ["CXX"] = shutil.which("g++")
 
+
 def readme():
     with copen("README.md", "r", "utf-8") as fstream:
         return fstream.read()
@@ -101,4 +94,5 @@ setup(
     },
     zip_safe=False,
     ext_modules=extensions,
+    cmdclass=CMDCLASS,
 )
