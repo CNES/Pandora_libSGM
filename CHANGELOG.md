@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Add cmdclass parameter on setup.py for google colab install. [#67]
+
 ## 0.4.2 (January 2022)
 
 ### Fixed
