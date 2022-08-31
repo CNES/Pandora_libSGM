@@ -35,7 +35,7 @@ def run_sgm_parall(
     cv_in: np.ndarray,
     p1_in: np.ndarray,
     p2_in: np.ndarray,
-    directions: np.ndarray,
+    directions: list,
     segmentation: np.ndarray,
     cost_paths: bool = False,
     overcounting: bool = False,
@@ -50,7 +50,7 @@ def run_sgm_parall(
     :param p2_in: p2 penalties
     :type p2_in:  3D np.ndarray
     :param directions: directions used in SGM
-    :type directions: 2D np.ndarray
+    :type directions: 2D list
     :param segmentation: segmentation for piecewise optimization
     :type segmentation: 2D np.ndarray
     :param cost_paths: True if Cost Volumes along direction are to be returned

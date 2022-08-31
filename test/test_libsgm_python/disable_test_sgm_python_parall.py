@@ -51,7 +51,7 @@ class TestSgmPythonParall(unittest.TestCase):
         self.p2_in = p2 * np.ones((3, 3, 8))
 
     def test_sgm_middle_value_invalid(self):
-        """ "
+        """
         Test SGM middle value invalid
         """
 
@@ -287,7 +287,6 @@ class TestSgmPythonParall(unittest.TestCase):
         cv_in = common.cv_in
 
         directions = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]]
-
         segmentation = np.ones((3, 3))
 
         cv_out = sgm.run_sgm_parall(

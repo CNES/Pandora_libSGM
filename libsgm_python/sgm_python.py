@@ -32,7 +32,7 @@ def run_sgm(
     cv_in: np.ndarray,
     p1_in: np.ndarray,
     p2_in: np.ndarray,
-    directions: np.ndarray,
+    directions: list,
     segmentation: np.ndarray,
     cost_paths: bool = False,
     overcounting: bool = False,
