@@ -92,7 +92,7 @@ class LrManager:
         self.previous_lr = self.current_lr
         self.previous_segm = self.current_segm
         delete_items_indexes = []
-        for idx in range(len(self.planes_front)):
+        for idx, _ in enumerate(self.planes_front):
             self.planes_front[idx]["i"] += self.dir[0]
             self.planes_front[idx]["j"] += self.dir[1]
 
@@ -137,14 +137,14 @@ class LrManager:
             if self.previous_segm is not None:
                 self.previous_segm.pop(idx)
 
-    def set_current_lr(self, lr_s: np.ndarray) -> None:
+    def set_current_lr(self, lr_s: list) -> None:
         """
         Set current lr
 
         :param lr_s: partial cost lr
         :type lr_s:  np.ndarray
         """
-        self.current_lr = lr_s
+        self.current_lr = lr_s  # type: ignore
 
     def get_previous_lr(self, num_plane: int) -> np.ndarray:
         """
@@ -157,14 +157,14 @@ class LrManager:
         """
         return self.previous_lr[num_plane]  # type:ignore
 
-    def set_current_segm(self, segm_s: np.ndarray) -> None:
+    def set_current_segm(self, segm_s: list) -> None:
         """
         Set current segmentation
 
         :param lr_s: partial segmentation
         :type lr_s:  np.ndarray
         """
-        self.current_segm = segm_s
+        self.current_segm = segm_s  # type: ignore
 
     def get_previous_segm(self, num_plane: int) -> np.ndarray:
         """

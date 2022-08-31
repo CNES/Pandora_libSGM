@@ -65,7 +65,7 @@ def run_sgm(
 
     for idx_dir in range(len(directions)):  # pylint:disable=consider-using-enumerate
         # optimize this direction
-        lr_manager = LrManager(cv_in.shape, directions[idx_dir])
+        lr_manager = LrManager(cv_in.shape, directions[idx_dir])  # type: ignore
 
         nb_planes = len(lr_manager.planes_front)
         while nb_planes > 0:

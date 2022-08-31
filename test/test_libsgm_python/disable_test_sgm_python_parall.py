@@ -24,7 +24,7 @@ This module contains tests for the sgm_python_parall code
 """
 import unittest
 
-import test.test_libsgm_python.common as common
+from test.test_libsgm_python import common
 import numpy as np
 
 import libsgm_python.sgm_python_parall as sgm
