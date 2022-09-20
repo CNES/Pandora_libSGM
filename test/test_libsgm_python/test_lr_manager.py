@@ -348,8 +348,7 @@ class TestSgmPythonLrManager(unittest.TestCase):
         np.testing.assert_array_equal(lr_manager_1.planes_front[1]["j"], [0])
 
         current_lr1 = [np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]), np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) + 12]
-        lr_manager_1.set_current_lr(current_lr1)
-
+        lr_manager_1.set_current_lr(current_lr1)  #
         # add to seen
         seen_pixels[lr_manager_1.planes_front[0]["i"], lr_manager_1.planes_front[0]["j"]] += 1
         seen_pixels[lr_manager_1.planes_front[1]["i"], lr_manager_1.planes_front[1]["j"]] += 1
