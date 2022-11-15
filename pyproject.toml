@@ -1,7 +1,11 @@
 [build-system]
 requires = [
-    "setuptools>=42",
+    "setuptools>=45",
     "wheel",
-    "oldest-supported-numpy"
+     "setuptools_scm[toml]>=6.2",
+    "oldest-supported-numpy",
 ]
+
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
