@@ -2,8 +2,11 @@
 
 ## Unreleased
 
-### Fixed
+## 0.4.4 (January 2023)
 
+### Added
+
+- Align package versions with Pandora. 
 - Add cmdclass parameter on setup.py for google colab install. [#67]
 
 ## 0.4.2 (January 2022)
