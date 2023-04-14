@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+ - Deletion of the pip install codecov of githubAction CI.
+
 ### Added 
 
 - Pytest in Github Action pipeline [#75]
