@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added 
+
+- Pytest in Github Action pipeline [#75]
+
 ## 0.4.4 (January 2023)
 
 ### Added
