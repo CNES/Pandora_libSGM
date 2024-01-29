@@ -1,12 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.4.5 (January 2024)
+
+### Changed
+
+- Update of the minimal version for python. [#78]
 
 ### Fixed
 
- - Deletion of the pip install codecov of githubAction CI.
+- Deletion of the pip install codecov of githubAction CI.
 
-### Added 
+### Added
 
 - Pytest in Github Action pipeline [#75]
 
