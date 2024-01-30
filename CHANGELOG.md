@@ -5,6 +5,7 @@
 ### Changed
 
 - Update of the minimal version for python. [#78]
+- Update of the minimal version for python in github workflow. [#79]
 
 ### Fixed
 
