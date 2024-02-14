@@ -59,7 +59,7 @@ ext_1 = Extension(
     language="c++",
     library_dirs=[],
     libraries=[],
-    include_dirs=[numpy.get_include(), SCR_DIR + "/lib/sgm.hpp"],
+    include_dirs=[numpy.get_include(), SCR_DIR + "/lib/"],
     extra_compile_args=["-O3", "-fopenmp", "-std=c++11"],
     extra_link_args=["-lgomp"],
 )
