@@ -66,13 +66,6 @@ ext_1 = Extension(
 
 extensions = [ext_1]
 
-try:
-    from sphinx.setup_command import BuildDoc
-
-    CMDCLASS.update({"build_sphinx": BuildDoc})
-except ImportError:
-    print("WARNING: sphinx not available. Doc cannot be built")
-
 os.environ["CC"] = shutil.which("gcc")
 os.environ["CXX"] = shutil.which("g++")
 
@@ -85,13 +78,6 @@ def readme():
 setup(
     use_scm_version=True,
     long_description=readme(),
-    command_options={
-        "build_sphinx": {
-            "build_dir": ("setup.py", "doc/build/"),
-            "source_dir": ("setup.py", "doc/source/"),
-            "warning_is_error": ("setup.py", True),
-        }
-    },
     zip_safe=False,
     ext_modules=extensions,
     cmdclass=CMDCLASS,
