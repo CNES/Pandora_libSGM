@@ -30,28 +30,11 @@ import os
 import shutil
 from codecs import open as copen
 import numpy
-from setuptools import setup
-
-try:
-    from Cython.Distutils.extension import Extension
-except ImportError:
-    from setuptools import Extension
-    from setuptools.command.build_ext import build_ext
-
-    USING_CYTHON = False
-else:
-    from Cython.Distutils import build_ext
-
-    USING_CYTHON = True
-
-CMDCLASS = {"build_ext": build_ext}
+from setuptools import Extension, setup
 
 SCR_DIR = "sources"
 
-if USING_CYTHON:
-    sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
-else:
-    sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.cpp"]
+sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
 
 ext_1 = Extension(
     "libSGM.sgm_wrapper",
@@ -80,5 +63,4 @@ setup(
     long_description=readme(),
     zip_safe=False,
     ext_modules=extensions,
-    cmdclass=CMDCLASS,
 )
