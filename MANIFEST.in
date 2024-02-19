@@ -1,2 +1,2 @@
 include README.md *.hpp *.pyx
-recursive-include  sources *.hpp *.pyx
+recursive-include  src *.hpp *.pyx

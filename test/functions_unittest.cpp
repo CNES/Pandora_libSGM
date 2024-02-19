@@ -19,7 +19,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "../../sources/lib/sgm.hpp"
+#include "../../src/libSGM/lib/sgm.hpp"
 
 
 //Global Test of sgm function: aggregation value from 8 directions on a middle point of cost volume

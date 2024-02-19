@@ -32,7 +32,7 @@ from codecs import open as copen
 import numpy
 from setuptools import Extension, setup
 
-SCR_DIR = "sources"
+SCR_DIR = "src/libSGM"
 
 sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
 

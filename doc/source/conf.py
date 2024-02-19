@@ -70,7 +70,7 @@ exhale_args = {
     "rootFileTitle": "Library C++ API",
     "doxygenStripFromPath": "..",
     "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin": "INPUT =../../sources/lib/sgm.hpp",
+    "exhaleDoxygenStdin": "INPUT =../../src/libSGM/lib/sgm.hpp",
 }
 
 # Tell sphinx what the primary language being documented is.
