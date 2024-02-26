@@ -41,6 +41,16 @@ cost_volumes_out = sgm_wrapper.sgm_api(cost_volume_in, p1, p2, directions, inval
 
 Let's see [pandora_plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm) for real life exemple.
 
+## Documentation
+
+To build documentation, `doxygen` must be installed on your system.
+
+Then install dependencies with `pip install .[doc]`.
+
+Go in `doc` and run `make html` to generate html documentation.
+
+You can serve generated documentation locally with `make serve` and open your webbrowser at [https://0.0.0.0:8000/](https://0.0.0.0:8000/).
+
 ## Related
 
 [Pandora](https://github.com/CNES/Pandora) - A stereo matching framework  
