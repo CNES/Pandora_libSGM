@@ -24,8 +24,8 @@
 * Structure to represent Aggregated Cost Volume and the positions of minimum costs along each direction
 */
 struct CostVolumes{
-    float * cost_volume;
-    int * cost_volume_min;
+    float * cost_volume; /**< Aggregated Cost Volume */
+    int * cost_volume_min; /**< positions of minimum costs along each direction */
 };
 
 
@@ -38,10 +38,13 @@ struct Direction{
     int dcol; /**< col coordinate */
 };
 
+/**
+* Structure to represent Penalty
+*/
 template<typename T>
 struct Penalty{
-    T P1;
-    T P2;
+    T P1; /**< Penalty 1 */
+    T P2; /**< Penalty 2 */
 };
 
 /*!
