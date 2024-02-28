@@ -219,13 +219,13 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long
 
     if (overcounting)
     {
-	// Factor to correct the overcounting: number of directions [8] - 1
-	overcounting_factor = 7;
+        // Factor to correct the overcounting: number of directions [8] - 1
+        overcounting_factor = 7;
     }
     else
     {
-	// Factor to not correct the over-counting
-	overcounting_factor = 0;
+        // Factor to not correct the over-counting
+        overcounting_factor = 0;
     }
 
     for (int row = nb_rows-1; row >= 0; row --)
