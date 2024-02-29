@@ -30,28 +30,11 @@ import os
 import shutil
 from codecs import open as copen
 import numpy
-from setuptools import setup
+from setuptools import Extension, setup
 
-try:
-    from Cython.Distutils.extension import Extension
-except ImportError:
-    from setuptools import Extension
-    from setuptools.command.build_ext import build_ext
+SCR_DIR = "src/libSGM"
 
-    USING_CYTHON = False
-else:
-    from Cython.Distutils import build_ext
-
-    USING_CYTHON = True
-
-CMDCLASS = {"build_ext": build_ext}
-
-SCR_DIR = "sources"
-
-if USING_CYTHON:
-    sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
-else:
-    sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.cpp"]
+sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
 
 ext_1 = Extension(
     "libSGM.sgm_wrapper",
@@ -59,19 +42,12 @@ ext_1 = Extension(
     language="c++",
     library_dirs=[],
     libraries=[],
-    include_dirs=[numpy.get_include(), SCR_DIR + "/lib/sgm.hpp"],
+    include_dirs=[numpy.get_include(), SCR_DIR + "/lib/"],
     extra_compile_args=["-O3", "-fopenmp", "-std=c++11"],
     extra_link_args=["-lgomp"],
 )
 
 extensions = [ext_1]
-
-try:
-    from sphinx.setup_command import BuildDoc
-
-    CMDCLASS.update({"build_sphinx": BuildDoc})
-except ImportError:
-    print("WARNING: sphinx not available. Doc cannot be built")
 
 os.environ["CC"] = shutil.which("gcc")
 os.environ["CXX"] = shutil.which("g++")
@@ -85,14 +61,6 @@ def readme():
 setup(
     use_scm_version=True,
     long_description=readme(),
-    command_options={
-        "build_sphinx": {
-            "build_dir": ("setup.py", "doc/build/"),
-            "source_dir": ("setup.py", "doc/source/"),
-            "warning_is_error": ("setup.py", True),
-        }
-    },
     zip_safe=False,
     ext_modules=extensions,
-    cmdclass=CMDCLASS,
 )
