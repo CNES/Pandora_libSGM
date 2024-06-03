@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.6a1 (June 2024)
+
+### Changed
+- Update the setup.py file to install with the -e option. [#68]
+
 ## 0.4.5 (January 2024)
 
 ### Changed
