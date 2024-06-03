@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2020 Centre National d'Etudes Spatiales (CNES).
+# Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
 #
 # This file is part of LIBSGM
 #
@@ -22,14 +22,14 @@ CC=gcc
 CFLAGS=-Wall -ansi -pedantic -Wextra -g -fdiagnostics-show-option -o2
 CXX=g++
 # Project's variables
-SOURCES=sources/lib/sgm.cpp
+SOURCES=src/libSGM/lib/sgm.cpp
 EXEC=sgm
 
 # Points to the root of Google Test, relative to where this file is.
 GTEST_DIR=./test
 
 # Where to find user code.
-SRC_DIR=./sources/lib
+SRC_DIR=./src/libSGM/lib
 TEST_DIR=./test
 
 # Flags passed to the preprocessor.
