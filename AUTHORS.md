@@ -1,6 +1,6 @@
 # Credits
 
-Copyright (c) 2023 Centre National d'Etudes Spatiales (CNES).
+Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
 
 Pandora_libsgm is licensed under permissive Apache 2 license (See LICENSE file).
 The copyright is kept CNES only for long term maintenance ease.
@@ -14,6 +14,8 @@ This file keeps track of authors contributions.
 * Emmanuelle Sarrazin <emmanuelle.sarrazin@cnes.fr>
 * Natalia Jimenez <natalia.jimenez-diaz@csgroup.eu>
 * Alice de Bardonnèche-Richard <alice.de-bardonneche-richard@csgroup.eu>
+* Marie Leconte <marie.leconte@csgroup.eu>
+* Philippe Mallet-Ladeira <philippe.mallet-ladeira@csgroup.eu>
 
 ## Contributors
 
