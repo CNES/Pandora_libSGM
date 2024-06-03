@@ -1,5 +1,5 @@
 # pylint: skip-file
-# Copyright (c) 2020 Centre National d'Etudes Spatiales (CNES).
+# Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
 #
 # This file is part of LIBSGM
 #
@@ -37,7 +37,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "libSGM"
-copyright = "2020, CNES"
+copyright = "2024, CNES"
 author = "CNES"
 
 # The full version, including alpha/beta/rc tags
