@@ -23,6 +23,7 @@ This module contains tests for the sgm_python code
 """
 
 import unittest
+import warnings
 
 from test.test_libsgm_python import common
 import numpy as np
@@ -110,10 +111,12 @@ class TestSgmPython(unittest.TestCase):
 
         segmentation = np.ones((3, 3))
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="All-NaN slice encountered", category=RuntimeWarning)
+            cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=False)
 
-        # invalid value : nan
-        self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
+            # invalid value : nan
+            self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_invalid_overcounting(self):
         """ "
@@ -128,10 +131,12 @@ class TestSgmPython(unittest.TestCase):
 
         segmentation = np.ones((3, 3))
 
-        cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=True)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="All-NaN slice encountered", category=RuntimeWarning)
+            cv_out = sgm.run_sgm(cv_in, p1_in, p2_in, directions, segmentation, cost_paths=False, overcounting=True)
 
-        # invalid value : nan
-        self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
+            # invalid value : nan
+            self.assertTrue(np.isnan(cv_out["cv"][1, 1, 1]))
 
     def test_sgm_middle_value_lr_0_1(self):
         """ "
