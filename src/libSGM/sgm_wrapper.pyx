@@ -178,7 +178,7 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
     array_wrapper_cv.set_data(nb_row, nb_col, nb_disp, < void * > cv_out.cost_volume)
     ndarray_out_cv = np.array(array_wrapper_cv, copy=False)
     # Assign our object to the base of the ndarray object
-    ndarray_out_cv.base = < PyObject * > array_wrapper_cv
+    np.PyArray_SetBaseObject(ndarray_out_cv, array_wrapper_cv)
     # Increment the reference count, as the above assignement was done in C
     # and Python does not know that there is this additional reference
     Py_INCREF(array_wrapper_cv)
@@ -192,7 +192,7 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
         array_wrapper_cv_min.set_data(nb_row, nb_col, nb_dir, < void * > cv_out.cost_volume_min)
         ndarray_out_cv_min = np.array(array_wrapper_cv_min, copy=False)
         # Assign our object to the base of the ndarray object
-        ndarray_out_cv_min.base = < PyObject * > array_wrapper_cv_min
+        np.PyArray_SetBaseObject(ndarray_out_cv_min, array_wrapper_cv_min)
         # Increment the reference count, as the above assignement was done in C
         # and Python does not know that there is this additional reference
         Py_INCREF(array_wrapper_cv_min)
