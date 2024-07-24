@@ -25,7 +25,6 @@ C++ implementation of Semi-Global Matching (SGM) algorithm that is wrapped with 
 **libsgm** is available on Pypi and can be installed by:
 
 ```bash
-pip install numpy
 pip install libsgm
 ```
 
@@ -45,9 +44,9 @@ Let's see [pandora_plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm)
 
 To build documentation, `doxygen` must be installed on your system.
 
-Then install dependencies with `pip install .[doc]`.
+Then install dependencies with `pip install .[docs]`.
 
-Go in `doc` and run `make html` to generate html documentation.
+Go in `doc` directory and run `make html` to generate html documentation.
 
 You can serve generated documentation locally with `make serve` and open your webbrowser at [https://0.0.0.0:8000/](https://0.0.0.0:8000/).
 
@@ -58,14 +57,14 @@ You can serve generated documentation locally with `make serve` and open your we
 
 ## References
 
-Please cite the following paper when using libsgm:   
+Please cite the following paper when using libsgm:
 *Cournet, M., Sarrazin, E., Dumas, L., Michel, J., Guinet, J., Youssefi, D., Defonte, V., Fardet, Q., 2020. Ground-truth generation and disparity estimation for optical satellite imagery. ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences.*
 
-<a id="1.">[Hirschmuller, 2008]</a> 
+<a id="1.">[Hirschmuller, 2008]</a>
 *H. Hirschmuller, "Stereo Processing by Semiglobal Matching and Mutual Information," in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 30, no. 2, pp. 328-341, Feb. 2008. doi: 10.1109/TPAMI.2007.1166*
 
-<a id="2.">[Ernst, Ines & Hirschmüller, 2008]</a> 
+<a id="2.">[Ernst, Ines & Hirschmüller, 2008]</a>
 *Ernst, Ines & Hirschmüller, Heiko. (2008). Mutual Information Based Semi-Global Stereo Matching on the GPU. Proceedings of the International Symposium on Visual Computing. 5358. 10.1007/978-3-540-89639-5_22.*
 
-<a id="3.">[Hirschmüller, Buder & Ernst, 2012]</a> 
+<a id="3.">[Hirschmüller, Buder & Ernst, 2012]</a>
 *Hirschmüller, Heiko & Buder, Maximilian & Ernst, Ines. (2012). Memory Efficient Semi-Global Matching. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. I-3. 10.5194/isprsannals-I-3-371-2012.*
