@@ -1,6 +1,6 @@
 <h1 align="center"> libSGM </h1>
 
-<h4 align="center">Semi-Global Matching algorithm.</h4>
+<h4 align="center">Semi-Global Matching algorithm library </h4>
 
 <p align="center">
   <a href="https://github.com/CNES/Pandora_libSGM/actions"><img src="https://github.com/CNES/Pandora_libSGM/actions/workflows/libsgm_ci.yml/badge.svg?branch=master"></a>
@@ -18,7 +18,11 @@
 
 ## Overview
 
-C++ implementation of Semi-Global Matching (SGM) algorithm that is wrapped with cython to provide a `libsgm` python module based on [[Hirschmuller, 2008]](#1.), [[Ernst, Ines & Hirschmüller, 2008]](#2.) and [[Hirschmüller, Buder & Ernst, 2012]](#3.).
+libSGM is an implementation of Semi-Global Matching (SGM) algorithm based on [[Hirschmuller, 2008]](#1.), [[Ernst, Ines & Hirschmüller, 2008]](#2.) and [[Hirschmüller, Buder & Ernst, 2012]](#3.).
+
+The main algorithm is written in C++ and is wrapped with cython to provide a `libSGM` python module.
+
+An experimental less efficient python only variant is available for study purposes only.
 
 ## Install
 
@@ -30,7 +34,7 @@ pip install libsgm
 
 ## Usage
 
-libSGM must be used as a package :
+libSGM is a library only and must be used as a package :
 
 ```python
 from libSGM import sgm_wrapper
@@ -42,11 +46,11 @@ Let's see [pandora_plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm)
 
 ## Documentation
 
-To build documentation, `doxygen` must be installed on your system.
+To build library documentation, `doxygen` must be installed on your system.
 
 Then install dependencies with `pip install .[docs]`.
 
-Go in `doc` directory and run `make html` to generate html documentation.
+Go in `docs` directory and run `make html` to generate html documentation.
 
 You can serve generated documentation locally with `make serve` and open your webbrowser at [https://0.0.0.0:8000/](https://0.0.0.0:8000/).
 
