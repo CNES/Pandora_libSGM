@@ -24,13 +24,14 @@ This module contains functions to execute SGM library.
 """
 
 cimport cython
-from libc.stdlib cimport *
+from cpython cimport Py_INCREF, PyObject
 from libc.stdint cimport *
-from libcpp.string cimport string
+from libc.stdlib cimport *
 from libcpp cimport bool
-from cpython cimport PyObject , Py_INCREF
+from libcpp.string cimport string
 
 import numpy as np
+
 cimport numpy as np
 cimport openmp
 

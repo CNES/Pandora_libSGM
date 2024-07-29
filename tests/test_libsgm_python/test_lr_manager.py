@@ -24,6 +24,7 @@
 This module contains tests for the lr_manager code
 """
 import unittest
+
 import numpy as np
 
 import libsgm_python.lr_manager as lrm
