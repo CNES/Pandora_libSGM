@@ -34,12 +34,12 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 # https://github.com/psf/black
-line-length = 80
+line-length = 120
 exclude = "(.eggs|.git|.mypy_cache|.nox|.tox|_build|build|dist|venv)"
 
 [tool.isort]
 profile = 'black'
-line_length = 80
+line_length = 120
 
 [tool.mypy]
 no_implicit_optional = false

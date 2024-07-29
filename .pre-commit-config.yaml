@@ -1,30 +1,45 @@
 repos:
   - repo: local
     hooks:
-    -   id: pylint
-        name: PyLint
-        entry: python -m pylint --rcfile=.pylintrc
-        language: system
-        files: \.py$
+      - id: isort
+        name: Isort
         stages: [commit]
-    -   id: sphinx-checking
-        name: Checking Sphinx building
-        entry: python setup.py build_sphinx
         language: system
-        files: ^(doc/.*|libsgm_python/.*)$
-        pass_filenames: False
-        stages: [ push ]
-    -   id: mypy
-        name: mypy
-        entry: mypy
-        language: system
-        files: \.py$
-        stages: [ commit ]
-    -   id: black
-        name: black
-        entry: black --line-length=120
-        language: system
-        files: \.py$
-        stages: [ commit ]
-        types: [ python ]
+        entry: isort
+        types: [python]
 
+      - id: black
+        name: Black
+        stages: [commit]
+        language: system
+        entry: black
+        types: [python]
+
+      - id: flake8
+        name: Flake8
+        stages: [commit]
+        language: system
+        entry: flake8
+        types: [python]
+
+      - id: pylint
+        name: PyLint
+        stages: [commit]
+        language: system
+        entry: pylint --rcfile=.pylintrc
+        files: \.py$
+
+      - id: mypy
+        name: mypy
+        stages: [commit]
+        language: system
+        entry: mypy
+        files: \.py$
+
+      - id: sphinx-checking
+        name: Checking Sphinx building
+        entry: sphinx-build -M html docs/source/ docs/build -W --keep-going
+        language: system
+        files: ^(docs/.*|libsgm_python/.*)$
+        pass_filenames: False
+        stages: [push]
