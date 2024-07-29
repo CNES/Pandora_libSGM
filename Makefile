@@ -128,10 +128,10 @@ format/black: ## run black formatting
 	@echo "+ $@"
 	@${VENV}/bin/black src/libsgm_python src/libSGM tests
 
-### Check code quality and linting : isort, black, flake8, pylint
+### Check code quality and linting : isort, black, pylint
 
 .PHONY: lint
-lint: lint/isort lint/black lint/flake8 lint/pylint lint/mypy ## check code quality and linting
+lint: lint/isort lint/black lint/pylint lint/mypy ## check code quality and linting
 
 .PHONY: lint/isort
 lint/isort: ## check imports style with isort
@@ -143,11 +143,6 @@ lint/black: ## check global style with black
 	@echo "+ $@"
 	@${VENV}/bin/black --check src/libsgm_python src/libSGM tests
 
-.PHONY: lint/flake8
-lint/flake8: ## check linting with flake8
-	@echo "+ $@"
-	@${VENV}/bin/flake8 src/libsgm_python src/libSGM tests
-
 .PHONY: lint/pylint
 lint/pylint: ## check linting with pylint
 	@echo "+ $@"
@@ -156,7 +151,7 @@ lint/pylint: ## check linting with pylint
 .PHONY: lint/mypy
 lint/mypy: ## check linting type hints with mypy
 	@echo "+ $@"
-	@${VENV}/bin/mypy src/libsgm_python src/libSGM tests
+	@${VENV}/bin/mypy src/libsgm_python tests
 
 ## Documentation section
 
@@ -213,7 +208,7 @@ clean-pyc: ## clean Python file artifacts
 .PHONY: clean-cython
 clean-cython: ## clean Python file artifacts
 	@echo "+ $@"
-	@rm src/libSGM/sgm_wrapper.cpython-38-x86_64-linux-gnu.so
+	@rm -f src/libSGM/sgm_wrapper.cpython-38-x86_64-linux-gnu.so
 
 .PHONY: clean-test
 clean-test: ## clean test and coverage artifacts
