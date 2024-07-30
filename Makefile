@@ -85,7 +85,7 @@ help: ## this help
 venv: ## create virtualenv in "venv" dir if not exists
 	@test -d ${VENV} || $(PYTHON_CMD) -m venv ${VENV}
 	@touch ${VENV}/bin/activate
-	@test -d ${VENV} || ${VENV}/bin/python -m pip install --upgrade wheel setuptools pip
+	${VENV}/bin/python -m pip install --upgrade wheel setuptools pip # no check to upgrade each time
 
 
 .PHONY: install
@@ -155,11 +155,12 @@ lint/mypy: ## check linting type hints with mypy
 
 ## Documentation section
 
-.PHONY: docs
-docs:  ## generate Sphinx HTML documentation, including API docs
+.PHONY: docs-python
+docs-python:  ## generate Sphinx HTML documentation, including API docs
 	@${VENV}/bin/sphinx-build -M clean docs/source/ docs/build
 	@${VENV}/bin/sphinx-build -M html docs/source/ docs/build -W --keep-going
 	$(BROWSER) docs/build/html/index.html
+
 
 ## Release section
 
@@ -323,6 +324,10 @@ coverage-cpp: install  ## Gcovr (depends on gcovr in venv)
 cppcheck: ## C++ cppcheck for CI (depends cppcheck)
 	@cppcheck -v --enable=all --xml -Isrc/libSGM/lib src/libSGM/lib/*.cpp 2> cppcheck-report.xml
 
+.PHONY: docs-cpp
+docs-cpp: ## C++ doxygen doc generation (depends doxygen)
+	@doxygen docs/Doxyfile
+
 
 .PHONY: clean-cpp
 clean-cpp: ## Clean C++ libSGM project
@@ -337,6 +342,10 @@ test: test-cpp test-python ## run all tests: cpp tests (libSGM) then python test
 
 .PHONY: coverage
 coverage: coverage-python coverage-cpp ## check code coverage C++ + python
+
+
+.PHONY: coverage
+docs: docs-cpp docs-python ## cpp doxygen and python sphinx doc generation
 
 .PHONY: clean
 clean: clean-python clean-cpp ## clean all python + C++

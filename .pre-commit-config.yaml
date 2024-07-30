@@ -15,13 +15,6 @@ repos:
         entry: black
         types: [python]
 
-      - id: flake8
-        name: Flake8
-        stages: [commit]
-        language: system
-        entry: flake8
-        types: [python]
-
       - id: pylint
         name: PyLint
         stages: [commit]
