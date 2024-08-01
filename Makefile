@@ -85,7 +85,7 @@ help: ## this help
 venv: ## create virtualenv in "venv" dir if not exists
 	@test -d ${VENV} || $(PYTHON_CMD) -m venv ${VENV}
 	@touch ${VENV}/bin/activate
-	${VENV}/bin/python -m pip install --upgrade wheel setuptools pip # no check to upgrade each time
+	@${VENV}/bin/python -m pip install --upgrade wheel setuptools pip # no check to upgrade each time
 
 
 .PHONY: install
