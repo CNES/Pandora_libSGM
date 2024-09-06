@@ -11,9 +11,11 @@ Welcome to libSGM's documentation!
    :caption: Contents:
 
    getting_started
-   user_guide
-   api_reference
    developer_guide
+   sgm_wrapper
+   api_reference/library_root.rst
+   api_reference/index.rst
+
 
 Indices and tables
 ==================

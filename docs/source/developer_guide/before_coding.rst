@@ -10,7 +10,7 @@ We have decided to distribute the generated .cpp files as well as our Cython sou
 So, without Cython, one can install libsgm package. 
 
 This means that developers have to maintain the generated .cpp files. It can be done automatically, by Cython compilation.
-To generate them, make sur Cython is installed and use the following command in `src/libSGM`:
+To generate them, make sure Cython is installed and use the following command in `src/libSGM`:
 
 .. sourcecode:: text
 

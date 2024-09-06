@@ -5,7 +5,7 @@ Required dependencies
 *********************
 
 * C++ compilator (gcc 4.8.5 or later)
-* `Python <https://www.python.org//>`__ (2.7 or later)
+* `Python <https://www.python.org//>`__ (3.8 or later)
 * `Numpy <http://www.numpy.org/>`__ 
 
 

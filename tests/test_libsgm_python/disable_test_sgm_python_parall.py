@@ -24,10 +24,10 @@ This module contains tests for the sgm_python_parall code
 """
 import unittest
 
-from test.test_libsgm_python import common
 import numpy as np
 
 import libsgm_python.sgm_python_parall as sgm
+from tests.test_libsgm_python import common
 
 
 class TestSgmPythonParall(unittest.TestCase):

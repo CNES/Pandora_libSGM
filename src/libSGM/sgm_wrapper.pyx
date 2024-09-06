@@ -24,13 +24,14 @@ This module contains functions to execute SGM library.
 """
 
 cimport cython
-from libc.stdlib cimport *
+from cpython cimport Py_INCREF, PyObject
 from libc.stdint cimport *
-from libcpp.string cimport string
+from libc.stdlib cimport *
 from libcpp cimport bool
-from cpython cimport PyObject , Py_INCREF
+from libcpp.string cimport string
 
 import numpy as np
+
 cimport numpy as np
 cimport openmp
 
@@ -224,7 +225,7 @@ def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None,
     :type cost_paths: bool
     :param overcounting: over-counting correction option
     :type overcounting: bool
-    :return: the aggregated cost volume and the minimum cost along 8 directions
+    :return: the aggregated cost volume ('cv') and the minimum cost along 8 directions ('cv_min')
     :rtype: dict of 3D arrays
     """
 
