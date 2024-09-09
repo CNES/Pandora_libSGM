@@ -24,13 +24,14 @@ This module contains functions to execute SGM library.
 """
 
 cimport cython
-from libc.stdlib cimport *
+from cpython cimport Py_INCREF, PyObject
 from libc.stdint cimport *
-from libcpp.string cimport string
+from libc.stdlib cimport *
 from libcpp cimport bool
-from cpython cimport PyObject , Py_INCREF
+from libcpp.string cimport string
 
 import numpy as np
+
 cimport numpy as np
 cimport openmp
 
@@ -178,7 +179,7 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
     array_wrapper_cv.set_data(nb_row, nb_col, nb_disp, < void * > cv_out.cost_volume)
     ndarray_out_cv = np.array(array_wrapper_cv, copy=False)
     # Assign our object to the base of the ndarray object
-    ndarray_out_cv.base = < PyObject * > array_wrapper_cv
+    np.PyArray_SetBaseObject(ndarray_out_cv, array_wrapper_cv)
     # Increment the reference count, as the above assignement was done in C
     # and Python does not know that there is this additional reference
     Py_INCREF(array_wrapper_cv)
@@ -192,7 +193,7 @@ def sgm_call(my_cv_type[:,:,::1] cv_in_memview, my_cv_type[:,:,::1] p1_in_memvie
         array_wrapper_cv_min.set_data(nb_row, nb_col, nb_dir, < void * > cv_out.cost_volume_min)
         ndarray_out_cv_min = np.array(array_wrapper_cv_min, copy=False)
         # Assign our object to the base of the ndarray object
-        ndarray_out_cv_min.base = < PyObject * > array_wrapper_cv_min
+        np.PyArray_SetBaseObject(ndarray_out_cv_min, array_wrapper_cv_min)
         # Increment the reference count, as the above assignement was done in C
         # and Python does not know that there is this additional reference
         Py_INCREF(array_wrapper_cv_min)
@@ -224,7 +225,7 @@ def sgm_api( cv_in not None, p1_in not None, p2_in not None, direction not None,
     :type cost_paths: bool
     :param overcounting: over-counting correction option
     :type overcounting: bool
-    :return: the aggregated cost volume and the minimum cost along 8 directions
+    :return: the aggregated cost volume ('cv') and the minimum cost along 8 directions ('cv_min')
     :rtype: dict of 3D arrays
     """
 

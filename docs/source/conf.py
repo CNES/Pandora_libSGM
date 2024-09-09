@@ -23,15 +23,18 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+# Imports
+import os
+import sys
+from importlib.metadata import version as get_version
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath("."))
 
 
 # -- Project information -----------------------------------------------------
@@ -41,8 +44,16 @@ copyright = "2024, CNES"
 author = "CNES"
 
 # The full version, including alpha/beta/rc tags
-release = "1.A"
+try:
+    version = get_version("libSGM")
+    release = version
+except Exception as error:
+    print("WARNING: cannot find LibSGM version")
+    version = "Unknown"
+    release = version
 
+# The master toctree document.
+master_doc = "index"
 
 # -- General configuration ---------------------------------------------------
 
@@ -57,6 +68,19 @@ extensions = [
     "sphinx.ext.imgmath",
     "breathe",
     "exhale",
+    "autoapi.extension",
+]
+
+autoapi_dirs = ["../../src"]
+autoapi_root = "api_reference"
+autoapi_keep_files = True
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "private-members",
+    "show-inheritance",
+    "show-module-summary",
+    "special-members",
 ]
 
 # Setup the breathe extension

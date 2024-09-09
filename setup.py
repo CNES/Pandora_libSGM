@@ -1,5 +1,3 @@
-# type:ignore
-# pylint: disable=ungrouped-imports
 #!/usr/bin/env python
 # coding: utf8
 #
@@ -27,8 +25,6 @@ and setup elements to configure and identify the software.
 """
 
 import os
-import shutil
-from codecs import open as copen
 import numpy
 from setuptools import Extension, setup
 
@@ -49,18 +45,6 @@ ext_1 = Extension(
 
 extensions = [ext_1]
 
-os.environ["CC"] = shutil.which("gcc")
-os.environ["CXX"] = shutil.which("g++")
-
-
-def readme():
-    with copen("README.md", "r", "utf-8") as fstream:
-        return fstream.read()
-
-
 setup(
-    use_scm_version=True,
-    long_description=readme(),
-    zip_safe=False,
     ext_modules=extensions,
 )

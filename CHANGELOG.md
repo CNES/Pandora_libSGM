@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.7a1 (September 2024)
+
+### Changed
+- Update numpy version. [#82]
+- Update makefile packaging. [#74]
+
+### Fixed
+- Update setup.py and sgm_wrapper files to fix windows compilation bugs. 
+- Update github ci file. [#83]
+
+
 ## 0.4.6 (June 2024)
 
 ### Changed

@@ -124,7 +124,6 @@ class LrManager:
                 # delete in stored segm, as list are of size (1) (n) or (m) (1), only one delete is effective
 
                 if self.previous_segm is not None:
-                    print(self.previous_segm[idx])
                     self.previous_segm[idx] = np.delete(self.previous_segm[idx], indexes_invalid_i, axis=0)
                     self.previous_segm[idx] = np.delete(self.previous_segm[idx], indexes_invalid_j, axis=0)
 

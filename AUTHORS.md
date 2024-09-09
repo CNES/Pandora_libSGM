@@ -25,6 +25,7 @@ This file keeps track of authors contributions.
 * Julien Michel <Julien.Michel@cnes.fr>
 * Yoann Steux <yoann.steux@csgroup.eu>
 * David Youssefi <David.Youssefi@cnes.fr>
+* Emmanuel Dubois <emmanuel.dubois@cnes.fr>
 
 Update here with new contributors.
 
