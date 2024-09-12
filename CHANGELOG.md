@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.4.7 (September 2024)
+
 ## 0.4.7a1 (September 2024)
 
 ### Changed
