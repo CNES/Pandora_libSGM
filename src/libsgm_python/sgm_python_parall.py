@@ -31,7 +31,7 @@ from numba import njit, prange
 from .lr_manager import LrManager
 
 
-def run_sgm_parall(
+def run_sgm_parall(  # pylint: disable=R0917
     cv_in: np.ndarray,
     p1_in: np.ndarray,
     p2_in: np.ndarray,
@@ -90,7 +90,7 @@ def run_sgm_parall(
 
 
 @njit(parallel=True, cache=False)
-def compute_costs(
+def compute_costs(  # pylint: disable=R0917
     starting_points: List,
     cv_in: np.ndarray,
     p1_in: np.ndarray,

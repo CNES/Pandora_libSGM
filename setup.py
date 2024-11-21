@@ -24,27 +24,33 @@ This module contains the required libraries and softwares allowing to execute th
 and setup elements to configure and identify the software.
 """
 
-import os
-import numpy
-from setuptools import Extension, setup
 
-SCR_DIR = "src/libSGM"
+from pybind11.setup_helpers import Pybind11Extension, build_ext
+from setuptools import setup
 
-sources = [SCR_DIR + "/lib/sgm.cpp", SCR_DIR + "/sgm_wrapper.pyx"]
+try:
+    ext_modules = [
+        Pybind11Extension(
+            "c_libsgm",
+            [
+                "src/libsgm_c/sgm_wrapper.cpp"
+            ],
+            extra_compile_args=["-O3"]
+        ),
+    ]
 
-ext_1 = Extension(
-    "libSGM.sgm_wrapper",
-    sources,
-    language="c++",
-    library_dirs=[],
-    libraries=[],
-    include_dirs=[numpy.get_include(), SCR_DIR + "/lib/"],
-    extra_compile_args=["-O3", "-fopenmp", "-std=c++11"],
-    extra_link_args=["-lgomp"],
-)
+    setup(
+        ext_modules=ext_modules,
+        # Currently, build_ext only provides an optional "highest supported C++
+        # level" feature, but in the future it may provide more features.
+        cmdclass={"build_ext": build_ext},
+    )
 
-extensions = [ext_1]
-
-setup(
-    ext_modules=extensions,
-)
+except Exception:
+    print(
+        "\n\nAn error occurred while building the project, "
+        "please ensure you have the most updated version of pip, setuptools, "
+        "setuptools_scm and wheel with:\n"
+        "   pip install -U pip setuptools setuptools_scm wheel\n\n"
+    )
+    raise

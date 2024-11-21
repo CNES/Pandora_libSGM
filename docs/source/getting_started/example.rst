@@ -7,7 +7,7 @@ SGM applied on random values
 .. sourcecode:: python
 
   import numpy as np 
-  from libSGM import sgm_wrapper
+  import c_libsgm
 
   direction = np.array([[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, -1], [-1, 1]], dtype=np.int32)
 
@@ -23,7 +23,7 @@ SGM applied on random values
   optimization_layer = np.ones((1000,1000), dtype=np.float32)
 
   # Sgm computation 
-  cost_volume_out = sgm_wrapper.sgm_api(cost_volume_in, penalty_p1, penalty_p2, direction, invalid_value=100.0, segmentation=optimization_layer, cost_paths=False, overcounting=False)
+  cost_volume_out = c_libsgm.sgm_api(cost_volume_in, penalty_p1, penalty_p2, direction, invalid_value=100.0, segmentation=optimization_layer, cost_paths=False, overcounting=False)
 
   # Show Cost Volume 
   print(cost_volume_out["cv"])

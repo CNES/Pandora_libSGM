@@ -23,8 +23,9 @@
 /**
 * Structure to represent Aggregated Cost Volume and the positions of minimum costs along each direction
 */
+template<typename T>
 struct CostVolumes{
-    float * cost_volume; /**< Aggregated Cost Volume */
+    T * cost_volume; /**< Aggregated Cost Volume */
     int * cost_volume_min; /**< positions of minimum costs along each direction */
 };
 
@@ -67,8 +68,8 @@ struct Penalty{
  */
 
 
-template<typename T>
-CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
+template<typename T , typename Tout>
+CostVolumes<Tout> sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
  unsigned int nb_disps, T invalid_value, float* segmentation, bool cost_paths, bool overcounting);
 
 /*!

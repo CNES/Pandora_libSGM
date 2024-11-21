@@ -96,7 +96,7 @@ install: venv  ## install environment for development target (depends venv)
 	@test -f .git/hooks/pre-commit || ${VENV}/bin/pre-commit install -t pre-commit
 	@test -f .git/hooks/pre-push || ${VENV}/bin/pre-commit install -t pre-push
 	@echo "Libsgm installed in dev mode in virtualenv ${VENV}"
-	@echo "Libsgm venv usage : source ${VENV}/bin/activate; python3 -c 'import libSGM'"
+	@echo "Libsgm venv usage : source ${VENV}/bin/activate; python3 -c 'import c_libsgm'"
 
 ## python Test section
 
@@ -141,17 +141,17 @@ lint/isort: ## check imports style with isort
 .PHONY: lint/black
 lint/black: ## check global style with black
 	@echo "+ $@"
-	@${VENV}/bin/black --check src/libsgm_python src/libSGM tests
+	@${VENV}/bin/black --check src/libsgm_python src/ tests
 
 .PHONY: lint/pylint
 lint/pylint: ## check linting with pylint
 	@echo "+ $@"
-	@set -o pipefail; ${VENV}/bin/pylint src/libsgm_python src/libSGM tests --rcfile=.pylintrc --output-format=parseable | tee pylint-report.txt # pipefail to propagate pylint exit code in bash
+	@set -o pipefail; ${VENV}/bin/pylint src/libsgm_python src/ tests --rcfile=.pylintrc --output-format=parseable | tee pylint-report.txt # pipefail to propagate pylint exit code in bash
 
 .PHONY: lint/mypy
 lint/mypy: ## check linting type hints with mypy
 	@echo "+ $@"
-	@${VENV}/bin/mypy src/libsgm_python tests
+	@${VENV}/bin/mypy src/libsgm_python
 
 ## Documentation section
 
@@ -178,7 +178,7 @@ release: dist ## package and upload a release
 ## Clean section
 
 .PHONY: clean-python
-clean-python: clean-venv clean-build clean-precommit clean-pyc clean-cython clean-test clean-lint clean-docs ## clean all python dev env
+clean-python: clean-venv clean-build clean-precommit clean-pyc clean-test clean-lint clean-docs ## clean all python dev env
 
 .PHONY: clean-venv
 clean-venv: ## clean venv
@@ -206,10 +206,6 @@ clean-pyc: ## clean Python file artifacts
 	@find . -type d -name "__pycache__" -exec rm -fr {} +
 	@find . -name '*~' -exec rm -fr {} +
 
-.PHONY: clean-cython
-clean-cython: ## clean Python file artifacts
-	@echo "+ $@"
-	@rm -f src/libSGM/sgm_wrapper.cpython-38-x86_64-linux-gnu.so
 
 .PHONY: clean-test
 clean-test: ## clean test and coverage artifacts
@@ -244,14 +240,14 @@ CC=gcc
 CFLAGS=-Wall -ansi -pedantic -Wextra -g -fdiagnostics-show-option -o2
 CXX=g++
 # Project's variables
-SOURCES=src/libSGM/lib/sgm.cpp
+SOURCES=src/libsgm_c/sgm.cpp
 EXEC=sgm
 
 # Points to the root of Google Test, relative to where this file is.
 GTEST_DIR=./tests
 
 # Where to find user code.
-SRC_DIR=./src/libSGM/lib
+SRC_DIR=./src/libsgm_c
 TEST_DIR=./tests
 
 # Flags passed to the preprocessor.
@@ -322,7 +318,7 @@ coverage-cpp: install  ## Gcovr (depends on gcovr in venv)
 
 .PHONY: cppcheck
 cppcheck: ## C++ cppcheck for CI (depends cppcheck)
-	@cppcheck -v --enable=all --xml -Isrc/libSGM/lib src/libSGM/lib/*.cpp 2> cppcheck-report.xml
+	@cppcheck -v --enable=all --xml -Isrc/libSGM/lib src/libsgm_c/*.cpp 2> cppcheck-report.xml
 
 .PHONY: docs-cpp
 docs-cpp: ## C++ doxygen doc generation (depends doxygen)

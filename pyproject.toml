@@ -27,6 +27,7 @@ requires = [
     "wheel",
     "setuptools_scm[toml]>=8",
     "numpy",
+    "pybind11>=2.10.0",
 ]
 build-backend = "setuptools.build_meta"
 
