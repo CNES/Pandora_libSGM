@@ -43,9 +43,9 @@ source venv/bin/activate # Libsgm is installed in virtualenv
 libSGM is a library only and must be used as a package :
 
 ```python
-from libSGM import sgm_wrapper
+import c_libsgm
 ...
-cost_volumes_out = sgm_wrapper.sgm_api(cost_volume_in, p1, p2, directions, invalid_value, segmentation=optimization_layer, cost_paths=False, overcounting=False)
+cost_volumes_out = c_libsgm.sgm_api(cost_volume_in, p1, p2, directions, invalid_value, segmentation=optimization_layer, cost_paths=False, overcounting=False)
 ```
 
 Let's see [pandora_plugin_LibSGM](https://github.com/CNES/pandora_plugin_libsgm) for real life exemple.

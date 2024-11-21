@@ -28,7 +28,7 @@ import numpy as np
 from .lr_manager import LrManager
 
 
-def run_sgm(
+def run_sgm(  # pylint: disable=R0917
     cv_in: np.ndarray,
     p1_in: np.ndarray,
     p2_in: np.ndarray,
@@ -117,7 +117,7 @@ def run_sgm(
     return cv_out
 
 
-def compute_lr(
+def compute_lr(  # pylint: disable=R0917
     cv_in_2d_front: np.ndarray,
     lr_2d_previous: np.ndarray,
     disp: int,

@@ -19,7 +19,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "../../src/libSGM/lib/sgm.hpp"
+#include "../../src/libsgm_c/sgm.hpp"
 
 
 //Global Test of sgm function: aggregation value from 8 directions on a middle point of cost volume
@@ -39,7 +39,7 @@ TEST(sgmTest, TestMiddleValueInvalid){
 	bool overcounting = false;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	// method : constant
@@ -50,7 +50,7 @@ TEST(sgmTest, TestMiddleValueInvalid){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	EXPECT_EQ(456,cvs.cost_volume[13]);
 }
@@ -71,7 +71,7 @@ TEST(sgmTest, TestMiddleValueInvalidOvercounting){
 	bool overcounting = true;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,57,57,57,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	// method : constant
@@ -82,7 +82,7 @@ TEST(sgmTest, TestMiddleValueInvalidOvercounting){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	EXPECT_EQ(57,cvs.cost_volume[13]);
 }
@@ -100,7 +100,7 @@ TEST(sgmTest, TestMiddleValue_cost_paths){
 	P2 = 32;
 	invalid_value = 57;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	bool overcounting = false;
@@ -114,7 +114,7 @@ TEST(sgmTest, TestMiddleValue_cost_paths){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	EXPECT_EQ(142,cvs.cost_volume[13]);
 	EXPECT_EQ(2,cvs.cost_volume_min[32]);
@@ -136,7 +136,7 @@ TEST(sgmTest, TestMiddleValue){
 	bool overcounting = false;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	// method : constant
@@ -147,7 +147,7 @@ TEST(sgmTest, TestMiddleValue){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 
 	EXPECT_EQ(142,cvs.cost_volume[13]);
 }
@@ -167,7 +167,7 @@ TEST(sgmTest, TestMiddleValueResetHistory){
 	bool overcounting = false;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	// method : constant
@@ -178,7 +178,7 @@ TEST(sgmTest, TestMiddleValueResetHistory){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 2, 1, 1, 1, 1}; // piecewise optimization at the middle
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 
 	EXPECT_EQ(8 * cv_in[13],cvs.cost_volume[13]);
 }
@@ -200,7 +200,7 @@ TEST(sgmTest, TestMiddleValueOvercounting){
 	bool overcounting = true;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<uint16_t> cvs;
 	uint8_t cv_in[27]={1,15,20,14,16,6,8,19,8,13,11,3,22,12,9,16,4,12,18,2,17,23,7,1,5,20,14};
 
 	// method : constant
@@ -211,7 +211,7 @@ TEST(sgmTest, TestMiddleValueOvercounting){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 
 	EXPECT_EQ(58,cvs.cost_volume[13]);
 }
@@ -2322,7 +2322,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalid){
 	bool overcounting = false;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<float> cvs;
 	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,5.0,5.0,5.0,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
 
 	// method : constant
@@ -2332,7 +2332,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalid){
 
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	EXPECT_FLOAT_EQ(40.0,cvs.cost_volume[13]);
 }
@@ -2354,7 +2354,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting){
 	bool overcounting = true;
 	bool cost_paths = false;
 
-	CostVolumes cvs;
+	CostVolumes<float> cvs;
 	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,5.0,5.0,5.0,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
 
 	// method : constant
@@ -2365,7 +2365,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	EXPECT_FLOAT_EQ(5.0,cvs.cost_volume[13]);
 }
@@ -2383,7 +2383,7 @@ TEST(sgmTestFloat, TestMiddleValue){
 	P2 = 3.0;
 	invalid_value = 5.0;
 
-	CostVolumes cvs;
+	CostVolumes<float> cvs;
 	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
 
 	bool overcounting = false;
@@ -2397,7 +2397,7 @@ TEST(sgmTestFloat, TestMiddleValue){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
 	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
@@ -2425,7 +2425,7 @@ TEST(sgmTestFloat, TestMiddleValueOvercounting){
 	P2 = 3.0;
 	invalid_value = 5.0;
 
-	CostVolumes cvs;
+	CostVolumes<float> cvs;
 	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
 
 	bool overcounting = true;
@@ -2439,7 +2439,7 @@ TEST(sgmTestFloat, TestMiddleValueOvercounting){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<float, float>(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
 	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
@@ -2467,7 +2467,7 @@ TEST(sgmTestFloat, TestMiddleValueCostPaths){
 	P2 = 3.0;
 	invalid_value = 5.0;
 
-	CostVolumes cvs;
+	CostVolumes<float> cvs;
 	float cv_in[27]={1,0.5,0.3,-0.2,0.4,0.1,-0.8,0.6,0.2,-0.3,-0.7,0.4,0.8,-0.7,0.2,0.4,0.4,-0.1,-0.8,0.7,-0.6,0.1,-0.1,0.1,0.5,0.2,0.4};
 
 	bool overcounting = false;
@@ -2481,7 +2481,7 @@ TEST(sgmTestFloat, TestMiddleValueCostPaths){
     // segmentation
     float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-	cvs = sgm(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
+	cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp,invalid_value, segmentation, cost_paths, overcounting);
 	//middle point must stay invalid, equal to invalid value
 	// L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
 	// L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1

@@ -28,16 +28,16 @@
 #include "sgm.hpp"
 
 
-template<typename T>
-CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
+template<typename T , typename Tout>
+CostVolumes<Tout> sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
     unsigned int nb_disps, T invalid_value, float* segmentation, bool cost_paths, bool overcounting)
 
 {
     int nb_dir = 8;
     //Allocate final cost volume
-    CostVolumes cvs;
+    CostVolumes<Tout> cvs;
     // To avoid an overflow due to big multiplications, nb_rows and nb_cols are defined as long int
-    cvs.cost_volume = new float[nb_rows*nb_cols*nb_disps]();
+    cvs.cost_volume = new Tout[nb_rows*nb_cols*nb_disps]();
     // Allocate costs
     unsigned long int nb_values=1;
     if (cost_paths){
@@ -85,7 +85,7 @@ CostVolumes sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long
     T pixel_0, pixel_1, pixel_2;
     T * buff_disp_2 = new T[nb_disps]();
     T  min_disp0, min_disp1, min_disp2, min_disp3;
-    float costAggr;
+    Tout costAggr;
     // temporary variables for storing outputs
     float s0, s1, s2, s3;
     // temporary variables for storing current position of minimums
@@ -723,7 +723,7 @@ void assignDirections(int* directions_in, Direction* dirs)
 }
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
-template CostVolumes sgm(uint8_t * cv_in, uint8_t * p1_in, uint8_t * p2_in, int* directions_in, unsigned long int nb_rows,
+template CostVolumes<uint16_t> sgm<uint8_t, uint16_t>(uint8_t * cv_in, uint8_t * p1_in, uint8_t * p2_in, int* directions_in, unsigned long int nb_rows,
 unsigned long int nb_cols,unsigned int nb_disps, uint8_t invalid_value, float* segmentation, bool cost_paths, bool overcounting);
-template CostVolumes sgm(float * cv_in, float * p1_in, float * p2_in, int* directions_in, unsigned long int nb_rows,
+template CostVolumes<float> sgm<float, float>(float * cv_in, float * p1_in, float * p2_in, int* directions_in, unsigned long int nb_rows,
 unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float* segmentation, bool cost_paths, bool overcounting);

@@ -12,9 +12,9 @@ Welcome to libSGM's documentation!
 
    getting_started
    developer_guide
-   sgm_wrapper
    api_reference/library_root.rst
    api_reference/index.rst
+   c_libsgm.rst
 
 
 Indices and tables

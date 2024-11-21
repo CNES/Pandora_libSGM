@@ -7,7 +7,7 @@ C++ code is wrapped with cython to use it as python module.
 
 .. sourcecode:: python
 
-    from libSGM import sgm_wrapper
+    import c_libsgm
 
 
 

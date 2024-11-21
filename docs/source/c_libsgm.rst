@@ -1,7 +1,7 @@
-Sgm wrapper Cython module
+Sgm wrapper pybind module
 =========================
 
-.. automodule:: libSGM.sgm_wrapper
+.. automodule:: c_libsgm
    :members:
    :undoc-members:
    :show-inheritance:
