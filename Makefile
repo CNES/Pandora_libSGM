@@ -91,7 +91,7 @@ venv: ## create virtualenv in "venv" dir if not exists
 .PHONY: install
 install: venv  ## install environment for development target (depends venv)
 	@test -f ${VENV}/bin/pylibsgm || echo "Install LibSGM package from local directory"
-	@test -f ${VENV}/bin/pylibsgm || ${VENV}/bin/pip install -e .[dev,docs]
+	@test -f ${VENV}/bin/pylibsgm || ${VENV}/bin/pip install -e .[dev,docs,sgm-python]
 	@test -f .git/hooks/pre-commit || echo "Install pre-commit"
 	@test -f .git/hooks/pre-commit || ${VENV}/bin/pre-commit install -t pre-commit
 	@test -f .git/hooks/pre-push || ${VENV}/bin/pre-commit install -t pre-push
