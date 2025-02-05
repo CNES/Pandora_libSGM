@@ -38,4 +38,4 @@ module = [
 ignore_missing_imports = true
 
 [tool.cibuildwheel]
-skip = "pp*"
+skip = ["pp*", "cp36-*", "cp37-*", "cp38-*"]
