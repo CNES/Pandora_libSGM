@@ -1,4 +1,4 @@
-name: Test then Create and Publish wheel
+name: libSGM CI
 
 on: [push, pull_request]
 
