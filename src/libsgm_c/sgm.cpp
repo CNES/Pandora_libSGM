@@ -46,11 +46,12 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
   cvs.cost_volume_min = new int[nb_values]();
 
   // Direction (x,y) indicating previous pixel for each path
-  Direction direction[8] = {{0}};
+  Direction direction[8] = {};
   assignDirections(directions_in, direction);
 
-  // Penalties
-  T P1, P2;
+  // Penalties (Fix: Initialize P1 and P2 to avoid warnings)
+  T P1 = static_cast<T>(0);
+  T P2 = static_cast<T>(0);
   Penalty<T> penalty[8] = {{P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}};
 
   // Census Cost at pixel
@@ -104,9 +105,9 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
   float reset2;
   float reset3;
 
-  for (int row = 0; row < nb_rows; row++)
+  for (size_t row = 0; row < nb_rows; row++)
   {
-    for (int col = 0; col < nb_cols; col++)
+    for (size_t col = 0; col < nb_cols; col++)
     {
       // left-> right
       apply_penalty(&penalty[0], p1_in[0 + col * nb_dir + row * nb_dir * nb_cols], p2_in[0 + col * nb_dir + row * nb_dir * nb_cols]);
@@ -122,7 +123,7 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
       pos0 = 0, pos1 = 0, pos2 = 0, pos3 = 0;
       // Get current class of pixel
       current_class = segmentation[col + row * nb_cols];
-      for (int disp = 0; disp < nb_disps; disp++)
+      for (size_t disp = 0; disp < nb_disps; disp++)
       {
         costAggr = 0;
         s0 = 0, s1 = 0, s2 = 0, s3 = 0;
@@ -245,7 +246,7 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
       // Get current class of pixel
       current_class = segmentation[col + row * nb_cols];
 
-      for (int disp = 0; disp < nb_disps; disp++)
+      for (size_t disp = 0; disp < nb_disps; disp++)
       {
         costAggr = 0;
         s4 = 0, s5 = 0, s6 = 0, s7 = 0;
