@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.1a1 (February 2025)
+
+### Added 
+
+- Multi wheel with cibuildwheel
+
+### Changed 
+
+- Numba removal in C++ mode
+
 ## 0.5.0 (November 2024)
 
 ### Changed

@@ -115,3 +115,7 @@ gtest_main.o
 sgm.gcda
 sgm.gcno
 sgm.o
+# coverage C++
+gcovr-report.xml
+# cppcheck C++
+cppcheck-report.xml
