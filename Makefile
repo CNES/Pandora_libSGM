@@ -41,6 +41,9 @@ ifndef VENV
 	VENV = "venv"
 endif
 
+# Check cppcheck presence
+CHECK_CPPCHECK = $(shell ${VENV}/bin/python3 -m pip list|grep cppcheck)
+
 # Browser definition for sphinx and coverage
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -91,7 +94,7 @@ venv: ## create virtualenv in "venv" dir if not exists
 .PHONY: install
 install: venv  ## install environment for development target (depends venv)
 	@test -f ${VENV}/bin/pylibsgm || echo "Install LibSGM package from local directory"
-	@test -f ${VENV}/bin/pylibsgm || ${VENV}/bin/pip install -e .[dev,docs]
+	@test -f ${VENV}/bin/pylibsgm || ${VENV}/bin/pip install -e .[dev,docs,sgm-python]
 	@test -f .git/hooks/pre-commit || echo "Install pre-commit"
 	@test -f .git/hooks/pre-commit || ${VENV}/bin/pre-commit install -t pre-commit
 	@test -f .git/hooks/pre-push || ${VENV}/bin/pre-commit install -t pre-push
@@ -193,6 +196,8 @@ clean-build: ## clean build artifacts
 	@rm -fr .eggs/
 	@find . -name '*.egg-info' -exec rm -fr {} +
 	@find . -name '*.egg' -exec rm -f {} +
+	@rm -f src/c_libsgm*.so
+	@rm -f build.log
 
 .PHONY: clean-precommit
 clean-precommit: ## clean precommit hooks in .git/hooks
@@ -300,14 +305,14 @@ test-cpp: run_functions_unittest ## Run libSGM C++ unit tests
 
 # Build tests
 sgm.o: $(SRC_DIR)/sgm.cpp $(SRC_DIR)/sgm.hpp $(GTEST_HEADERS) ## Generate libsgm C++ library
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/sgm.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/sgm.cpp >> build.log 2>&1
 
 functions_unittest.o: $(TEST_DIR)/functions_unittest.cpp \
                      $(SRC_DIR)/sgm.hpp $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/functions_unittest.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/functions_unittest.cpp >> build.log 2>&1
 
 functions_unittest: sgm.o functions_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@ >> build.log 2>&1
 	
 run_functions_unittest: functions_unittest
 	./$^ --gtest_output=xml:$^.gtest.xml
@@ -317,8 +322,9 @@ coverage-cpp: install  ## Gcovr (depends on gcovr in venv)
 	@gcovr --sonarqube -r . -f src > gcovr-report.xml
 
 .PHONY: cppcheck
-cppcheck: ## C++ cppcheck for CI (depends cppcheck)
-	@cppcheck -v --enable=all --xml -Isrc/libSGM/lib src/libsgm_c/*.cpp 2> cppcheck-report.xml
+cppcheck: ## C++ cppcheck for CI (depends cppcheck in CI or install it)
+	@[ "${CHECK_CPPCHECK}" ] ||${VENV}/bin/python3 -m pip install --upgrade cppcheck
+	@cppcheck -v --enable=all --xml -Isrc/ src/libsgm_c/*.cpp 2> cppcheck-report.xml
 
 .PHONY: docs-cpp
 docs-cpp: ## C++ doxygen doc generation (depends doxygen)
@@ -328,8 +334,7 @@ docs-cpp: ## C++ doxygen doc generation (depends doxygen)
 .PHONY: clean-cpp
 clean-cpp: ## Clean C++ libSGM project
 	@echo "+ $@"
-	@rm -f $(TESTS) $(OBJECTS) $(EXEC)  gtest_main.a *.o *.gtest.xml *.gcno *.gcda
-
+	@rm -f $(TESTS) $(OBJECTS) $(EXEC)  gtest_main.a *.o *.gtest.xml *.gcno *.gcda gcovr-report.xml cppcheck-report.xml
 
 ########################## GLOBAL Targets (python + cpp) ######################
 
