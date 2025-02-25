@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 (February 2025)
+
+### Changed
+- remove numpy<2 dependency
+
+### Fixed
+- CI github bugs
+
 ## 0.5.1a1 (February 2025)
 
 ### Added 
