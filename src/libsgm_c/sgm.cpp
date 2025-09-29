@@ -28,22 +28,16 @@
 #include "sgm.hpp"
 
 template <typename T, typename Tout>
-CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
-                      unsigned int nb_disps, T invalid_value, float *segmentation, bool cost_paths, bool overcounting)
+void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
+                      unsigned int nb_disps, T invalid_value, float *segmentation, bool cost_paths, bool overcounting, CostVolumes<Tout> &cvs)
 
 {
   int nb_dir = 8;
-  // Allocate final cost volume
-  CostVolumes<Tout> cvs;
-  // To avoid an overflow due to big multiplications, nb_rows and nb_cols are defined as long int
-  cvs.cost_volume = new Tout[nb_rows * nb_cols * nb_disps]();
   // Allocate costs
   unsigned long int nb_values = 1;
-  if (cost_paths)
-  {
+  if (cost_paths) {
     nb_values = nb_rows * nb_cols * nb_dir;
   }
-  cvs.cost_volume_min = new int[nb_values]();
 
   // Direction (x,y) indicating previous pixel for each path
   Direction direction[8] = {};
@@ -308,8 +302,6 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
   delete[] buff_disp_6;
   delete[] buff_class5_6_7;
   delete[] tmp_buff_class5_6_7;
-
-  return cvs;
 }
 
 std::pair<float, int> update_minimum(float current_min, float value, int current_disp, int disp)
@@ -719,7 +711,7 @@ void assignDirections(int *directions_in, Direction *dirs)
 }
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
-template CostVolumes<uint16_t> sgm<uint8_t, uint16_t>(uint8_t *cv_in, uint8_t *p1_in, uint8_t *p2_in, int *directions_in, unsigned long int nb_rows,
-                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation, bool cost_paths, bool overcounting);
-template CostVolumes<float> sgm<float, float>(float *cv_in, float *p1_in, float *p2_in, int *directions_in, unsigned long int nb_rows,
-                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation, bool cost_paths, bool overcounting);
+template void sgm<uint8_t, uint16_t>(uint8_t *cv_in, uint8_t *p1_in, uint8_t *p2_in, int *directions_in, unsigned long int nb_rows,
+                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation, bool cost_paths, bool overcounting, CostVolumes<uint16_t> &cvs);
+template void sgm<float, float>(float *cv_in, float *p1_in, float *p2_in, int *directions_in, unsigned long int nb_rows,
+                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation, bool cost_paths, bool overcounting, CostVolumes<float> &cvs);

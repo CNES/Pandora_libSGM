@@ -14,9 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include "pybind11/pytypes.h"
 #include "sgm.cpp"
 
 
@@ -84,7 +86,21 @@ py::dict pySgmApi(py::array_t<T, py::array::c_style> cv_in,
     int* directions_buf = const_cast<int*>(directions.data());
     float* segmentation_buf = const_cast<float*>(segmentation.data());
 
-    CostVolumes<Tout> cv_out = sgm<T, Tout>(
+    // Allocate output NumPy array
+    py::array_t<Tout> cost_volume(std::vector<size_t>{ nb_rows, nb_cols, nb_disps });
+    std::fill(cost_volume.mutable_data(), cost_volume.mutable_data() + nb_rows * nb_cols * nb_disps, 0);
+    py::array_t<int> cost_volume_min;
+    if(cost_paths){
+        cost_volume_min = py::array_t<int> (std::vector<size_t>{nb_rows, nb_cols, 8});
+        std::fill(cost_volume_min.mutable_data(), cost_volume_min.mutable_data() + nb_rows * nb_cols * 8, 0);        
+    } 
+
+    CostVolumes<Tout> cv_out = {
+        .cost_volume = reinterpret_cast<Tout*>(cost_volume.mutable_data()),
+        .cost_volume_min = reinterpret_cast<int*>(cost_volume_min.mutable_data())
+    };
+
+    sgm<T, Tout>(
         cv_in_buf,
         p1_in_buf,
         p2_in_buf,
@@ -95,18 +111,14 @@ py::dict pySgmApi(py::array_t<T, py::array::c_style> cv_in,
         invalid_value,
         segmentation_buf,
         cost_paths,
-        overcounting
+        overcounting,
+        cv_out
     );
 
     py::dict result;
-    result["cv"] = py::array_t<Tout>(std::vector<size_t>{nb_rows, nb_cols, nb_disps}, cv_out.cost_volume);
-    if (cost_paths) {
-        result["cv_min"] = py::array_t<int>(std::vector<size_t>{nb_rows, nb_cols, 8}, cv_out.cost_volume_min);
-    } else {
-        result["cv_min"] = py::array_t<int>();  // Return an empty array if cost_paths is false
-    }
-    delete cv_out.cost_volume;
-    delete cv_out.cost_volume_min;
+    result["cv"] = cost_volume;
+    result["cv_min"] = cost_volume_min;
+    
     return result;
 }
 
