@@ -88,11 +88,9 @@ py::dict pySgmApi(py::array_t<T, py::array::c_style> cv_in,
 
     // Allocate output NumPy array
     py::array_t<Tout> cost_volume(std::vector<size_t>{ nb_rows, nb_cols, nb_disps });
-    std::fill(cost_volume.mutable_data(), cost_volume.mutable_data() + nb_rows * nb_cols * nb_disps, 0);
     py::array_t<int> cost_volume_min;
     if(cost_paths){
         cost_volume_min = py::array_t<int> (std::vector<size_t>{nb_rows, nb_cols, 8});
-        std::fill(cost_volume_min.mutable_data(), cost_volume_min.mutable_data() + nb_rows * nb_cols * 8, 0);        
     } 
 
     CostVolumes<Tout> cv_out = {

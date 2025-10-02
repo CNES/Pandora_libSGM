@@ -24,8 +24,38 @@
 #include <algorithm>
 #include <array>
 #include <functional>
-#include <omp.h>
 #include "sgm.hpp"
+
+// Forward declaration required because update_minimum is used inside template sgm
+static inline void update_minimum(float& current_min, float value, int& current_disp, int disp){
+  if (current_min < value){
+    current_min = value;
+    current_disp = disp;
+  }
+}
+
+
+template <typename T, int colStep>
+inline T costCompute(T pixelCost, int col, int disp, T invalid_value,
+                             int nb_disps, Penalty<T> P, T *buff, T min_disp, T pixel)
+{
+  T costAggr1 = pixelCost;
+  if (pixelCost != invalid_value)
+  {
+    // Previous cost
+    const T tmp1 = buff[disp + colStep * col * nb_disps];
+    // Previous cost at disparity-1
+    // For disp == 0, pixel = tmp1, so tmp2 = tmp1 + P.P1 => no problem as we take the min
+    const T tmp2 = pixel + P.P1;
+    // Previous cost at disparity+1
+    const T tmp3 = (disp < nb_disps - 1) ? buff[disp + 1 + colStep * col * nb_disps] + P.P1 : std::numeric_limits<T>::max();
+    // Minimum cost at previous point
+    const T tmp4 = (min_disp) + P.P2;
+    // Minimum path cost
+    costAggr1 += (std::min({tmp1, tmp2, tmp3, tmp4}) - (min_disp));
+  }
+  return costAggr1;
+}
 
 template <typename T, typename Tout>
 void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
@@ -33,23 +63,21 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
 
 {
   int nb_dir = 8;
-  // Allocate costs
-  unsigned long int nb_values = 1;
-  if (cost_paths) {
-    nb_values = nb_rows * nb_cols * nb_dir;
-  }
 
   // Direction (x,y) indicating previous pixel for each path
   Direction direction[8] = {};
   assignDirections(directions_in, direction);
 
   // Penalties (Fix: Initialize P1 and P2 to avoid warnings)
-  T P1 = static_cast<T>(0);
-  T P2 = static_cast<T>(0);
-  Penalty<T> penalty[8] = {{P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}, {P1, P2}};
+  Penalty<T> penalty[8] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
-  // Census Cost at pixel
-  T pixelCost;
+  // Reset cvs.cost_volume to 0
+  std::fill(cvs.cost_volume, cvs.cost_volume + nb_rows * nb_cols * nb_disps, 0);
+
+  // Reset cvs.cost_volume_min to 0
+  if(cost_paths){
+      std::fill(cvs.cost_volume_min, cvs.cost_volume_min + nb_rows * nb_cols * 8, 0);
+  }
 
   /*
   Two passes: the 1st from top left , the 2nd from bottom right
@@ -75,12 +103,8 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
   T *buff1 = new T[nb_cols * nb_disps]();
   T *buff2 = new T[nb_cols * nb_disps]();
   T *buff3 = new T[nb_cols * nb_disps]();
-  T pixel_0, pixel_1, pixel_2;
   T *buff_disp_2 = new T[nb_disps]();
-  T min_disp0, min_disp1, min_disp2, min_disp3;
-  Tout costAggr;
-  // temporary variables for storing outputs
-  float s0, s1, s2, s3;
+
   // temporary variables for storing current position of minimums
   int pos0, pos1, pos2, pos3;
   // temporary variables for storing current minimums
@@ -88,16 +112,11 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
   // temporary buffers for storing current classification
   float current_class;
   // buff_class0 stores the class from the left of current pixel (previous seen pixel)
-  float buff_class0;
+  float buff_class0 = segmentation[0];
   // tmp_buff_class1_2_3 stores the previous classes of pixels seen in the line
   float *tmp_buff_class1_2_3 = new float[nb_cols]();
   // buff_class1_2_3 stores the previous line of classes
   float *buff_class1_2_3 = new float[nb_cols]();
-  // reset variables store 0 if we want to reset history, 1 if not
-  float reset0;
-  float reset1;
-  float reset2;
-  float reset3;
 
   for (size_t row = 0; row < nb_rows; row++)
   {
@@ -117,42 +136,112 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
       pos0 = 0, pos1 = 0, pos2 = 0, pos3 = 0;
       // Get current class of pixel
       current_class = segmentation[col + row * nb_cols];
-      for (size_t disp = 0; disp < nb_disps; disp++)
-      {
-        costAggr = 0;
-        s0 = 0, s1 = 0, s2 = 0, s3 = 0;
-        pixelCost = cv_in[disp + col * nb_disps + row * nb_disps * nb_cols];
-        // left-> right
-        s0 = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                        nb_cols, nb_disps, penalty[0].P1, penalty[0].P2, direction[0], buff0, &min_disp0,
-                                        &pixel_0, current_class, buff_class0, reset0);
-        costAggr += s0;
-        // up -> down
-        s1 = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                        nb_cols, nb_disps, penalty[1].P1, penalty[1].P2, direction[1], buff1, &min_disp1,
-                                        &pixel_1, current_class, buff_class1_2_3, reset1);
-        costAggr += s1;
-        // diagonal from top left
-        s2 = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                        nb_cols, nb_disps, penalty[2].P1, penalty[2].P2, direction[2], buff2, buff_disp_2,
-                                        &min_disp2, &pixel_2, current_class, buff_class1_2_3, reset2);
-        costAggr += s2;
-        // diagonal from top right
-        s3 = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                        nb_cols, nb_disps, penalty[3].P1, penalty[3].P2, direction[3], buff3, &min_disp3,
-                                        current_class, buff_class1_2_3, reset3);
-        costAggr += s3;
 
-        cvs.cost_volume[disp + col * nb_disps + row * nb_disps * nb_cols] += costAggr;
+      bool isBorder0 = (row - direction[0].drow < 0 || row - direction[0].drow > (nb_rows - 1) || col - direction[0].dcol < 0 || col - direction[0].dcol > (nb_cols - 1));
+      bool isBorder1 = (row - direction[1].drow < 0 || row - direction[1].drow > (nb_rows - 1) || col - direction[1].dcol < 0 || col - direction[1].dcol > (nb_cols - 1));
+      bool isBorder2 = (row - direction[2].drow < 0 || row - direction[2].drow > (nb_rows - 1) || col - direction[2].dcol < 0 || col - direction[2].dcol > (nb_cols - 1));
+      bool isBorder3 = (row - direction[3].drow < 0 || row - direction[3].drow > (nb_rows - 1) || col - direction[3].dcol < 0 || col - direction[3].dcol > (nb_cols - 1));
+      
+      bool noOp0 = isBorder0 || current_class != buff_class0;
+      bool noOp1 = isBorder1 || current_class != buff_class1_2_3[col - direction[1].dcol];
+      bool noOp2 = isBorder2 || current_class != buff_class1_2_3[col - direction[2].dcol];
+      bool noOp3 = isBorder3 || current_class != buff_class1_2_3[col - direction[3].dcol];
 
-        if (cost_paths)
-        {
-          std::tie(min0, pos0) = update_minimum(min0, s0, pos0, disp);
-          std::tie(min1, pos1) = update_minimum(min1, s1, pos1, disp);
-          std::tie(min2, pos2) = update_minimum(min2, s2, pos2, disp);
-          std::tie(min3, pos3) = update_minimum(min3, s3, pos3, disp);
+      T* cv_in_base = &cv_in[col * nb_disps + row * nb_disps * nb_cols];
+      Tout* cvs_out_base = &cvs.cost_volume[col * nb_disps + row * nb_disps * nb_cols];
+
+      if(noOp0){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr0 = cv_in_base[disp];
+
+          // Save data in buffer
+          buff0[disp] = costAggr0;
+          cvs_out_base[disp] += costAggr0;
+          if (cost_paths) update_minimum(min0, costAggr0, pos0, disp);
+        }
+      }else{
+        T min_disp0 = *std::min_element(&buff0[0], &buff0[nb_disps]);
+        T lastBuff = buff0[0];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr0 = costCompute<T, 0>(cv_in_base[disp], 0, disp, invalid_value, nb_disps, penalty[0], buff0, min_disp0, lastBuff);
+          // Save buffer data before writing new value in buffer
+          lastBuff = buff0[disp];
+
+          // Save data in buffer
+          buff0[disp] = costAggr0;
+          cvs_out_base[disp] += costAggr0;
+          if (cost_paths) update_minimum(min0, costAggr0, pos0, disp);
         }
       }
+
+      if(noOp1){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr1 = cv_in_base[disp];
+          // Save data in buffer
+          buff1[disp + col * nb_disps] = costAggr1;
+          cvs_out_base[disp] += costAggr1;
+          if (cost_paths) update_minimum(min1, costAggr1, pos1, disp);
+        }
+      }else{
+        T min_disp1 = *std::min_element(&buff1[0 + col * nb_disps], &buff1[nb_disps + col * nb_disps]);
+        T lastBuff = buff1[0 + col * nb_disps];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr1 = costCompute<T, 1>(cv_in_base[disp], col, disp, invalid_value, nb_disps, penalty[1], buff1, min_disp1, lastBuff);
+          // sava buffer data before writing new value in buffer
+          lastBuff = buff1[disp + col * nb_disps];
+          // Save data in buffer
+          buff1[disp + col * nb_disps] = costAggr1;
+          cvs_out_base[disp] += costAggr1;
+          if (cost_paths) update_minimum(min1, costAggr1, pos1, disp);
+        }
+      }
+      
+      if(noOp2){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr2 = cv_in_base[disp];
+          // Save data in buffer
+          buff_disp_2[disp] = buff2[disp + col * nb_disps];
+          buff2[disp + col * nb_disps] = costAggr2;
+          cvs_out_base[disp] += costAggr2;
+          if (cost_paths) update_minimum(min2, costAggr2, pos2, disp);
+        }
+      }else{
+        T min_disp2 = *std::min_element(&buff_disp_2[0], &buff_disp_2[nb_disps]);
+        T lastBuff = buff_disp_2[0];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr2 = costCompute<T, 0>(cv_in_base[disp], col, disp, invalid_value, nb_disps, penalty[2], buff_disp_2, min_disp2, lastBuff);
+          // Save buffer data before writing new value in buffer_disp
+          lastBuff = buff_disp_2[disp];
+          // Save data in buffer
+          buff_disp_2[disp] = buff2[disp + col * nb_disps];
+          buff2[disp + col * nb_disps] = costAggr2;
+          cvs_out_base[disp] += costAggr2;
+          if (cost_paths) update_minimum(min2, costAggr2, pos2, disp);
+        }
+      }
+      
+      if(noOp3){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr3 = cv_in_base[disp];
+          buff3[disp + col * nb_disps] = costAggr3;
+          cvs_out_base[disp] += costAggr3;
+          if (cost_paths) update_minimum(min3, costAggr3, pos3, disp);
+        }
+      }else{
+        int newCol = col - direction[3].dcol;
+        T min_disp3 = *std::min_element(&buff3[0 + newCol * nb_disps], &buff3[nb_disps + newCol * nb_disps]);
+        T lastBuff = buff3[0 + newCol * nb_disps];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr3 = costCompute<T, 1>(cv_in_base[disp], newCol, disp, invalid_value, nb_disps, penalty[3], buff3, min_disp3, lastBuff);
+
+          // Save data in buffer
+          lastBuff = buff3[disp + newCol * nb_disps];
+          buff3[disp + col * nb_disps] = costAggr3;
+          cvs_out_base[disp] += costAggr3;
+          if (cost_paths) update_minimum(min3, costAggr3, pos3, disp);
+        }
+      }
+      
       if (cost_paths)
       {
         cvs.cost_volume_min[0 + col * nb_dir + row * nb_dir * nb_cols] = pos0;
@@ -185,11 +274,7 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
   T *buff5 = new T[nb_cols * nb_disps]();
   T *buff6 = new T[nb_cols * nb_disps]();
   T *buff7 = new T[nb_cols * nb_disps]();
-  T pixel_4, pixel_5, pixel_6;
   T *buff_disp_6 = new T[nb_disps]();
-  T min_disp4, min_disp5, min_disp6, min_disp7;
-  // temporary variables for storing outputs
-  float s4, s5, s6, s7;
   // temporary variables for storing current position of minimums
   int pos4, pos5, pos6, pos7;
   // temporary variables for storing current minimums
@@ -197,16 +282,11 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
 
   // temporary buffers for storing current classification
   // buff_class4 stores the class from the right of current pixel (previous seen pixel)
-  float buff_class4;
+  float buff_class4 = segmentation[(nb_cols - 1) + (nb_rows - 1) * nb_cols];
   // buff_class5_6_7 stores the previous line of classes
   float *buff_class5_6_7 = new float[nb_cols]();
   // tmp_buff_class5_6_7 stores the previous classes of pixels seen in the line
   float *tmp_buff_class5_6_7 = new float[nb_cols]();
-  // reset variables store 0 if we want to reset history, 1 if not
-  float reset4;
-  float reset5;
-  float reset6;
-  float reset7;
 
   int overcounting_factor;
 
@@ -240,43 +320,106 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
       // Get current class of pixel
       current_class = segmentation[col + row * nb_cols];
 
-      for (size_t disp = 0; disp < nb_disps; disp++)
-      {
-        costAggr = 0;
-        s4 = 0, s5 = 0, s6 = 0, s7 = 0;
+      bool isBorder4 = (row - direction[4].drow < 0 || row - direction[4].drow > (nb_rows - 1) || col - direction[4].dcol < 0 || col - direction[4].dcol > (nb_cols - 1));
+      bool isBorder5 = (row - direction[5].drow < 0 || row - direction[5].drow > (nb_rows - 1) || col - direction[5].dcol < 0 || col - direction[5].dcol > (nb_cols - 1));
+      bool isBorder6 = (row - direction[6].drow < 0 || row - direction[6].drow > (nb_rows - 1) || col - direction[6].dcol < 0 || col - direction[6].dcol > (nb_cols - 1));
+      bool isBorder7 = (row - direction[7].drow < 0 || row - direction[7].drow > (nb_rows - 1) || col - direction[7].dcol < 0 || col - direction[7].dcol > (nb_cols - 1));
 
-        pixelCost = cv_in[disp + col * nb_disps + row * nb_disps * nb_cols];
-        // right->left
-        s4 = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                            nb_cols, nb_disps, penalty[4].P1, penalty[4].P2, direction[4], buff4, &min_disp4, &pixel_4,
-                                            current_class, buff_class4, reset4);
-        costAggr += s4;
-        // up -> down
-        s5 = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                            nb_cols, nb_disps, penalty[5].P1, penalty[5].P2, direction[5], buff5, &min_disp5, &pixel_5,
-                                            current_class, buff_class5_6_7, reset5);
-        costAggr += s5;
-        // diagonal from lower left
-        s6 = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                            nb_cols, nb_disps, penalty[6].P1, penalty[6].P2, direction[6], buff6, buff_disp_6, &min_disp6,
-                                            &pixel_6, current_class, buff_class5_6_7, reset6);
-        costAggr += s6;
-        // diagonal from lower right
-        s7 = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows,
-                                            nb_cols, nb_disps, penalty[7].P1, penalty[7].P2, direction[7], buff7, &min_disp7, current_class,
-                                            buff_class5_6_7, reset7);
-        costAggr += s7;
+      bool noOp4 = isBorder4 || current_class != buff_class4;
+      bool noOp5 = isBorder5 || current_class != buff_class5_6_7[col - direction[5].dcol];
+      bool noOp6 = isBorder6 || current_class != buff_class5_6_7[col - direction[6].dcol];
+      bool noOp7 = isBorder7 || current_class != buff_class5_6_7[col - direction[7].dcol];
 
-        cvs.cost_volume[disp + col * nb_disps + row * nb_disps * nb_cols] += costAggr;
-        // Correction of the over-counting by removing (overcounting_factor * pixel cost volume) to the aggregated cost volume
-        cvs.cost_volume[disp + col * nb_disps + row * nb_disps * nb_cols] -= overcounting_factor * pixelCost;
+      T* cv_in_base = &cv_in[col * nb_disps + row * nb_disps * nb_cols];
+      Tout* cvs_out_base = &cvs.cost_volume[col * nb_disps + row * nb_disps * nb_cols];
 
-        if (cost_paths)
-        {
-          std::tie(min4, pos4) = update_minimum(min4, s4, pos4, disp);
-          std::tie(min5, pos5) = update_minimum(min5, s5, pos5, disp);
-          std::tie(min6, pos6) = update_minimum(min6, s6, pos6, disp);
-          std::tie(min7, pos7) = update_minimum(min7, s7, pos7, disp);
+      if(noOp4){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr4 = cv_in_base[disp];
+          // Save data in buffer
+          buff4[disp] = costAggr4;
+          cvs_out_base[disp] += costAggr4;
+          if (cost_paths) update_minimum(min4, costAggr4, pos4, disp);
+        }
+      }else{
+        T min_disp4 = *std::min_element(&buff4[0], &buff4[nb_disps]);
+        T lastBuff = buff4[0];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr4 = costCompute<T, 0>(cv_in_base[disp], row, disp, invalid_value, nb_disps, penalty[4], buff4, min_disp4, lastBuff);
+          // sava buffer data before writing new value in buffer
+          lastBuff = buff4[disp];
+          // Save data in buffer
+          buff4[disp] = costAggr4;
+          cvs_out_base[disp] += costAggr4;
+          if (cost_paths) update_minimum(min4, costAggr4, pos4, disp);
+        }
+      }
+
+      if(noOp5){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr5 = cv_in_base[disp];
+          // Save data in buffer
+          buff5[disp + col * nb_disps] = costAggr5;
+          cvs_out_base[disp] += costAggr5;
+          if (cost_paths) update_minimum(min5, costAggr5, pos5, disp);
+        }
+      }else{
+        T min_disp5 = *std::min_element(&buff5[0 + col * nb_disps], &buff5[nb_disps + col * nb_disps]);
+        T lastBuff = buff5[0 + col * nb_disps];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr5 = costCompute<T, 1>(cv_in_base[disp], col, disp, invalid_value, nb_disps, penalty[5], buff5, min_disp5, lastBuff);
+          // Save buffer data before writing new value in buffer
+          lastBuff = buff5[disp + col * nb_disps];
+          // Save data in buffer
+          buff5[disp + col * nb_disps] = costAggr5;
+          cvs_out_base[disp] += costAggr5;
+          if (cost_paths) update_minimum(min5, costAggr5, pos5, disp);
+        }
+      }
+      
+      if(noOp6){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr6 = cv_in_base[disp];
+          buff_disp_6[disp] = buff6[disp + col * nb_disps];
+          buff6[disp + col * nb_disps] = costAggr6;
+          cvs_out_base[disp] += costAggr6;
+          if (cost_paths) update_minimum(min6, costAggr6, pos6, disp);
+        }
+      }else{
+        T min_disp6 = *std::min_element(&buff_disp_6[0], &buff_disp_6[nb_disps]);
+        T lastBuff = buff_disp_6[0];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr6 = costCompute<T, 0>(cv_in_base[disp], col, disp, invalid_value, nb_disps, penalty[6], buff_disp_6, min_disp6, lastBuff);
+          // Save buffer data before writing new value in buffer_disp
+          lastBuff = buff_disp_6[disp];
+          // Save data in buffer
+          buff_disp_6[disp] = buff6[disp + col * nb_disps];
+          buff6[disp + col * nb_disps] = costAggr6;
+          cvs_out_base[disp] += costAggr6;
+          if (cost_paths) update_minimum(min6, costAggr6, pos6, disp);
+        }
+      }
+      
+      if(noOp7){
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr7 = cv_in_base[disp];
+          buff7[disp + col * nb_disps] = costAggr7;
+          cvs_out_base[disp] += costAggr7;
+          cvs_out_base[disp] -= overcounting_factor*costAggr7;
+          if (cost_paths) update_minimum(min7, costAggr7, pos7, disp);
+        }
+      }else{
+        int newCol = col - direction[7].dcol;
+        T min_disp7 = *std::min_element(&buff7[0 + newCol * nb_disps], &buff7[nb_disps + newCol * nb_disps]);
+        T lastBuff = buff7[0 + newCol * nb_disps];
+        for (size_t disp = 0; disp < nb_disps; disp++){
+          T costAggr7 = costCompute<T, 1>(cv_in_base[disp], newCol, disp, invalid_value, nb_disps, penalty[7], buff7, min_disp7, lastBuff);
+          lastBuff = buff7[disp + newCol * nb_disps];
+          // Save buffer data before writing new value in buffer
+          buff7[disp + col * nb_disps] = costAggr7;
+          cvs_out_base[disp] += costAggr7;
+          cvs_out_base[disp] -= overcounting_factor*cv_in_base[disp];
+          if (cost_paths) update_minimum(min7, costAggr7, pos7, disp);
         }
       }
       if (cost_paths)
@@ -302,396 +445,6 @@ void sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_
   delete[] buff_disp_6;
   delete[] buff_class5_6_7;
   delete[] tmp_buff_class5_6_7;
-}
-
-std::pair<float, int> update_minimum(float current_min, float value, int current_disp, int disp)
-{
-  if (current_min < value)
-  {
-    return std::make_pair(current_min, current_disp);
-  }
-  else
-  {
-    return std::make_pair(value, disp);
-  }
-}
-
-template <typename T>
-T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
-                             int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff0, T *min_disp0, T *pixel_0, float current_class, float buff_class0, float &reset0)
-{
-
-  // Pixel cost at the point (row,col,disp)
-  /* ------------------*/
-  /* -- Left->right -- */
-  /* ------------------*/
-
-  T costAggr0 = pixelCost;
-
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  { /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-
-    if (disp == 0)
-    {
-      *min_disp0 = *std::min_element(&buff0[disp], &buff0[nb_disps]);
-      // if classes are different, reset history (reset == 0)
-      reset0 = static_cast<float>(current_class == buff_class0);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff0[disp];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_0 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff0[disp + 1] + P1 : std::numeric_limits<T>::max();
-
-      const T tmp4 = (*min_disp0) + P2;
-
-      // Minimum path cost
-      costAggr0 += reset0 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp0));
-    }
-  }
-  // sava buffer data before writing new value in buffer
-  *pixel_0 = buff0[disp];
-  // Save data in buffer
-  buff0[disp] = costAggr0;
-
-  return costAggr0;
-}
-
-template <typename T>
-T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_value,
-                             int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff1, T *min_disp1, T *pixel_1, float current_class, float *buff_class1, float &reset1)
-{
-  /* ------------------*/
-  /* --  Up->Down   -- */
-  /* ------------------*/
-  T costAggr1 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp1 = *std::min_element(&buff1[disp + col * nb_disps], &buff1[nb_disps + col * nb_disps]);
-      // if classes are different, reset history
-      reset1 = static_cast<float>(current_class == buff_class1[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff1[disp + col * nb_disps];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_1 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff1[disp + 1 + col * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp1) + P2;
-      // Minimum path cost
-      costAggr1 += reset1 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp1));
-    }
-  }
-  // sava buffer data before writing new value in buffer
-  *pixel_1 = buff1[disp + col * nb_disps];
-  // Save data in buffer
-  buff1[disp + col * nb_disps] = costAggr1;
-
-  return costAggr1;
-}
-
-template <typename T>
-T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_value,
-                             int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff2, T *buff_disp_2, T *min_disp2, T *pixel_2, float current_class, float *buff_class2, float &reset2)
-{
-
-  /* -----------------------------*/
-  /* --Diagonal from upper left-- */
-  /* -----------------------------*/
-  T costAggr2 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp2 = *std::min_element(&buff_disp_2[disp], &buff_disp_2[nb_disps]);
-      // if classes are different, reset history
-      reset2 = static_cast<float>(current_class == buff_class2[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff_disp_2[disp];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_2 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff_disp_2[disp + 1] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp2) + P2;
-      // Minimum path cost
-      costAggr2 += reset2 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp2));
-    }
-  }
-  // sava buffer data before writing new value in buffer_disp
-  *pixel_2 = buff_disp_2[disp];
-  // sava buffer data before writing new value in buffer_disp
-  buff_disp_2[disp] = buff2[disp + col * nb_disps];
-  // Save data in buffer
-  buff2[disp + col * nb_disps] = costAggr2;
-
-  return costAggr2;
-}
-
-template <typename T>
-T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_value,
-                             int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff3, T *min_disp3, float current_class, float *buff_class3, float &reset3)
-{
-  /* -----------------------------*/
-  /* --Diagonal from upper right-- */
-  /* -----------------------------*/
-  T costAggr3 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp3 = *std::min_element(&buff3[disp + (col - direction.dcol) * nb_disps], &buff3[nb_disps + (col - direction.dcol) * nb_disps]);
-      // if classes are different, reset history
-      reset3 = static_cast<float>(current_class == buff_class3[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff3[disp + (col - direction.dcol) * nb_disps];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? buff3[disp - 1 + (col - direction.dcol) * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff3[disp + 1 + (col - direction.dcol) * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp3) + P2;
-      // Minimum path cost
-      costAggr3 += reset3 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp3));
-    }
-  }
-  // Save data in buffer
-  buff3[disp + col * nb_disps] = costAggr3;
-
-  return costAggr3;
-}
-
-template <typename T>
-T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T invalid_value,
-                                 int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff4, T *min_disp4, T *pixel_4, float current_class, float buff_class4, float &reset4)
-{
-
-  /* ------------------*/
-  /* -- right->left -- */
-  /* ------------------*/
-  T costAggr4 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp4 = *std::min_element(&buff4[disp], &buff4[nb_disps]);
-      // if classes are different, reset history
-      reset4 = static_cast<float>(current_class == buff_class4);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff4[disp];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_4 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff4[disp + 1] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp4) + P2;
-      // Minimum path cost
-      costAggr4 += reset4 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp4));
-    }
-  }
-  // sava buffer data before writing new value in buffer
-  *pixel_4 = buff4[disp];
-  // Save data in buffer
-  buff4[disp] = costAggr4;
-
-  return costAggr4;
-}
-
-template <typename T>
-T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T invalid_value,
-                                 int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff5, T *min_disp5, T *pixel_5, float current_class, float *buff_class5, float &reset5)
-{
-
-  /* ------------------*/
-  /* --  Down->up   -- */
-  /* ------------------*/
-  T costAggr5 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp5 = *std::min_element(&buff5[disp + col * nb_disps], &buff5[nb_disps + col * nb_disps]);
-      // if classes are different, reset history
-      reset5 = static_cast<float>(current_class == buff_class5[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous cost
-      const T tmp1 = buff5[disp + col * nb_disps];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_5 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff5[disp + 1 + col * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp5) + P2;
-      // Minimum path cost
-      costAggr5 += reset5 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp5));
-    }
-  }
-  // sava buffer data before writing new value in buffer
-  *pixel_5 = buff5[disp + col * nb_disps];
-  // Save data in buffer
-  buff5[disp + col * nb_disps] = costAggr5;
-
-  return costAggr5;
-}
-
-template <typename T>
-T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T invalid_value,
-                                 int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff6, T *buff_disp_6, T *min_disp6, T *pixel_6, float current_class, float *buff_class6, float &reset6)
-{
-
-  /* -----------------------------*/
-  /* --diagonal from lower left-- */
-  /* -----------------------------*/
-
-  T costAggr6 = pixelCost;
-  // Border check
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp6 = *std::min_element(&buff_disp_6[disp], &buff_disp_6[nb_disps]);
-      // if classes are different, reset history
-      reset6 = static_cast<float>(current_class == buff_class6[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous pixels
-      const T tmp1 = buff_disp_6[disp];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? *pixel_6 + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff_disp_6[disp + 1] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp6) + P2;
-      // Minimum path cost
-      costAggr6 += reset6 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp6));
-    }
-  }
-  // sava buffer data before writing new value in buffer_disp
-  *pixel_6 = buff_disp_6[disp];
-  // sava buffer data before writing new value in buffer_disp
-  buff_disp_6[disp] = buff6[disp + col * nb_disps];
-  // Save data in buffer
-  buff6[disp + col * nb_disps] = costAggr6;
-
-  return costAggr6;
-}
-
-template <typename T>
-T aggregatedCostFromBottomRight7(T pixelCost, int row, int col, int disp, T invalid_value,
-                                 int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff7, T *min_disp7, float current_class, float *buff_class7, float &reset7)
-{
-
-  /* ------------------------------*/
-  /* --diagonal from lower right-- */
-  /* ------------------------------*/
-  T costAggr7 = pixelCost;
-  // Border
-  if (!(row - direction.drow < 0 || row - direction.drow > (nb_rows - 1) || col - direction.dcol < 0 || col - direction.dcol > (nb_cols - 1)))
-  {
-    /*Minimum cost at previous point for each disparity
-    Compute value just at the first disparity for a given point (row,col)
-    */
-    if (disp == 0)
-    {
-      *min_disp7 = *std::min_element(&buff7[disp + (col - direction.dcol) * nb_disps], &buff7[nb_disps + (col - direction.dcol) * nb_disps]);
-      // if classes are different, reset history
-      reset7 = static_cast<float>(current_class == buff_class7[col - direction.dcol]);
-    }
-    /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
-    So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
-    */
-    if (pixelCost != invalid_value)
-    {
-      // Previous pixels
-      const T tmp1 = buff7[disp + (col - direction.dcol) * nb_disps];
-      // Previous cost at disparity-1
-      const T tmp2 = (disp > 0) ? buff7[disp - 1 + (col - direction.dcol) * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Previous cost at disparity+1
-      const T tmp3 = (disp < nb_disps - 1) ? buff7[disp + 1 + (col - direction.dcol) * nb_disps] + P1 : std::numeric_limits<T>::max();
-      // Minimum cost at previous point
-      const T tmp4 = (*min_disp7) + P2;
-      // Minimum path cost
-      costAggr7 += reset7 * (std::min({tmp1, tmp2, tmp3, tmp4}) - (*min_disp7));
-    }
-  }
-  // sava buffer data before writing new value in buffer
-  buff7[disp + col * nb_disps] = costAggr7;
-
-  return costAggr7;
 }
 
 template <typename T>
