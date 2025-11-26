@@ -44,6 +44,9 @@ endif
 # Check cppcheck presence
 CHECK_CPPCHECK = $(shell ${VENV}/bin/python3 -m pip list|grep cppcheck)
 
+# Check gcovr presence
+CHECK_GCOVR = $(shell ${VENV}/bin/python -m pip list|grep gcovr)
+
 # Browser definition for sphinx and coverage
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -101,18 +104,22 @@ install: venv  ## install environment for development target (depends venv)
 	@echo "Libsgm installed in dev mode in virtualenv ${VENV}"
 	@echo "Libsgm venv usage : source ${VENV}/bin/activate; python3 -c 'import c_libsgm'"
 
+
 ## python Test section
 
 .PHONY: test-python
-test-python: ## run only python tests and coverage quickly with the default Python
-	@${VENV}/bin/pytest -o log_cli=true --cov-config=.coveragerc --cov --cov-report=term-missing
+test-python: install reports_dir  ## run only python tests and coverage quickly with the default Python
+	@${VENV}/bin/pytest -o log_cli=true --cov-config=.coveragerc --cov --cov-report=xml:reports/py-coverage.cobertura.xml --cov-report term
 
 .PHONY: coverage-python
-coverage-python: ## check code coverage quickly with the default Python
+coverage-python: install reports_dir  ## run coverage and output Cobertura XML + terminal report
 	@${VENV}/bin/coverage run -m pytest
 	@${VENV}/bin/coverage report -m
-	@${VENV}/bin/coverage html
-	$(BROWSER) htmlcov/index.html
+	@${VENV}/bin/coverage xml -o reports/py-coverage.cobertura.xml
+
+.PHONY: reports_dir
+reports_dir:
+	mkdir -p reports
 
 ## Code quality, linting section
 
@@ -122,14 +129,14 @@ coverage-python: ## check code coverage quickly with the default Python
 format: format/isort format/black  ## run black and isort formatting
 
 .PHONY: format/isort
-format/isort: ## run isort formatting 
+format/isort: install ## run isort formatting 
 	@echo "+ $@"
 	@${VENV}/bin/isort src/libsgm_python src/libSGM tests
 
 .PHONY: format/black
-format/black: ## run black formatting
+format/black: instal  ## run black formatting
 	@echo "+ $@"
-	@${VENV}/bin/black src/libsgm_python src/libSGM tests
+	@${VENV}/bin/black src/ tests
 
 ### Check code quality and linting : isort, black, pylint
 
@@ -137,32 +144,32 @@ format/black: ## run black formatting
 lint: lint/isort lint/black lint/pylint lint/mypy ## check code quality and linting
 
 .PHONY: lint/isort
-lint/isort: ## check imports style with isort
+lint/isort: install ## check imports style with isort
 	@echo "+ $@"
 	@${VENV}/bin/isort --check src/libsgm_python src/libSGM tests
 
 .PHONY: lint/black
-lint/black: ## check global style with black
+lint/black: install ## check global style with black
 	@echo "+ $@"
-	@${VENV}/bin/black --check src/libsgm_python src/ tests
+	@${VENV}/bin/black --check src/ tests
 
 .PHONY: lint/pylint
-lint/pylint: ## check linting with pylint
+lint/pylint: install  ## check linting with pylint
 	@echo "+ $@"
-	@set -o pipefail; ${VENV}/bin/pylint src/libsgm_python src/ tests --rcfile=.pylintrc --output-format=parseable | tee pylint-report.txt # pipefail to propagate pylint exit code in bash
+	@set -o pipefail; ${VENV}/bin/pylint src/ tests --rcfile=.pylintrc --output-format=parseable | tee pylint-report.txt # pipefail to propagate pylint exit code in bash
 
 .PHONY: lint/mypy
-lint/mypy: ## check linting type hints with mypy
+lint/mypy: install  ## check linting type hints with mypy
 	@echo "+ $@"
 	@${VENV}/bin/mypy src/libsgm_python
 
 ## Documentation section
 
 .PHONY: docs-python
-docs-python:  ## generate Sphinx HTML documentation, including API docs
+docs-python: install  ## generate Sphinx HTML documentation, including API docs
 	@${VENV}/bin/sphinx-build -M clean docs/source/ docs/build
+	@# option -W to fail if a warning is raised
 	@${VENV}/bin/sphinx-build -M html docs/source/ docs/build -W --keep-going
-	$(BROWSER) docs/build/html/index.html
 
 
 ## Release section
@@ -223,6 +230,7 @@ clean-test: ## clean test and coverage artifacts
 	@rm -fr .pytest_cache
 	@rm -f pytest-report.xml
 	@find . -type f -name "debug.log" -exec rm -fr {} +
+	@rm -rf reports
 
 .PHONY: clean-lint
 clean-lint: ## clean linting artifacts
@@ -300,8 +308,8 @@ gtest_main.o: $(GTEST_SRCS_)
 gtest_main.a: gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-.PHONY: test-cpp 
-test-cpp: run_functions_unittest ## Run libSGM C++ unit tests
+.PHONY: test-cpp
+test-cpp: run_functions_unittest reports_dir  ## Run libSGM C++ unit tests
 
 # Build tests
 sgm.o: $(SRC_DIR)/sgm.cpp $(SRC_DIR)/sgm.hpp $(GTEST_HEADERS) ## Generate libsgm C++ library
@@ -315,16 +323,17 @@ functions_unittest: sgm.o functions_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@ >> build.log 2>&1
 	
 run_functions_unittest: functions_unittest
-	./$^ --gtest_output=xml:$^.gtest.xml
+	./$^ --gtest_output=xml:reports/$^.gtest.xml
 
 .PHONY: coverage-cpp 
-coverage-cpp: install  ## Gcovr (depends on gcovr in venv)
-	@gcovr --sonarqube -r . -f src > gcovr-report.xml
+coverage-cpp: install reports_dir  ## Gcovr (depends on gcovr in venv)
+	@[ "${CHECK_GCOVR}" ] || ${VENV}/bin/python3 -m pip install --upgrade gcovr
+	@${VENV}/bin/gcovr --sonarqube -r . -f src > reports/gcovr-report.xml
 
 .PHONY: cppcheck
-cppcheck: ## C++ cppcheck for CI (depends cppcheck in CI or install it)
-	@[ "${CHECK_CPPCHECK}" ] ||${VENV}/bin/python3 -m pip install --upgrade cppcheck
-	@cppcheck -v --enable=all --xml -Isrc/ src/libsgm_c/*.cpp 2> cppcheck-report.xml
+cppcheck: venv reports_dir ## C++ cppcheck for CI (depends cppcheck in CI or install it)
+	@[ "${CHECK_CPPCHECK}" ] || ${VENV}/bin/python3 -m pip install --upgrade cppcheck
+	@${VENV}/bin/cppcheck -v --enable=all --xml -Isrc/ src/libsgm_c/*.cpp 2> reports/cppcheck-report.xml
 
 .PHONY: docs-cpp
 docs-cpp: ## C++ doxygen doc generation (depends doxygen)
@@ -334,7 +343,7 @@ docs-cpp: ## C++ doxygen doc generation (depends doxygen)
 .PHONY: clean-cpp
 clean-cpp: ## Clean C++ libSGM project
 	@echo "+ $@"
-	@rm -f $(TESTS) $(OBJECTS) $(EXEC)  gtest_main.a *.o *.gtest.xml *.gcno *.gcda gcovr-report.xml cppcheck-report.xml
+	@rm -rf $(TESTS) $(OBJECTS) $(EXEC)  gtest_main.a *.o *.gtest.xml *.gcno *.gcda reports/
 
 ########################## GLOBAL Targets (python + cpp) ######################
 
@@ -344,8 +353,7 @@ test: test-cpp test-python ## run all tests: cpp tests (libSGM) then python test
 .PHONY: coverage
 coverage: coverage-python coverage-cpp ## check code coverage C++ + python
 
-
-.PHONY: coverage
+.PHONY: docs
 docs: docs-cpp docs-python ## cpp doxygen and python sphinx doc generation
 
 .PHONY: clean
