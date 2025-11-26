@@ -30,13 +30,7 @@ from setuptools import setup
 
 try:
     ext_modules = [
-        Pybind11Extension(
-            "c_libsgm",
-            [
-                "src/libsgm_c/sgm_wrapper.cpp"
-            ],
-            extra_compile_args=["-O3"]
-        ),
+        Pybind11Extension("c_libsgm", ["src/libsgm_c/sgm_wrapper.cpp"], extra_compile_args=["-O3"]),
     ]
 
     setup(
