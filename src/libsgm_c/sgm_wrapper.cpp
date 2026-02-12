@@ -32,7 +32,8 @@ py::dict pySgmApi(py::array_t<T, py::array::c_style> cv_in,
                  float invalid_value,
                  py::array_t<float, py::array::c_style> segmentation,
                  bool cost_paths,
-                 bool overcounting)
+                 bool overcounting,
+                 bool edge_classification)
 {
 
     auto cv_in_shape = cv_in.shape();
@@ -95,7 +96,8 @@ py::dict pySgmApi(py::array_t<T, py::array::c_style> cv_in,
         invalid_value,
         segmentation_buf,
         cost_paths,
-        overcounting
+        overcounting,
+        edge_classification
     );
 
     py::dict result;
@@ -125,6 +127,7 @@ PYBIND11_MODULE(c_libsgm, m)
         py::arg("segmentation"),
         py::arg("cost_paths") = false,
         py::arg("overcounting") = false,
+        py::arg("edge_classification") = false,
         R"pbdoc(
             Python SGM wrapper
 
@@ -144,6 +147,8 @@ PYBIND11_MODULE(c_libsgm, m)
             :type cost_paths: bool
             :param overcounting: activate overcounting
             :type overcounting: bool
+            :param edge_classification: use segmentation as an edge classification
+            :type edge_classification: bool
             :return: ("cv": optimize cost volume, "cv_min": cost paths)
             :rtype: dict
         )pbdoc"
@@ -159,6 +164,7 @@ PYBIND11_MODULE(c_libsgm, m)
         py::arg("segmentation"),
         py::arg("cost_paths") = false,
         py::arg("overcounting") = false,
+        py::arg("edge_classification") = false,
         R"pbdoc(
             Python SGM wrapper
 
@@ -178,6 +184,8 @@ PYBIND11_MODULE(c_libsgm, m)
             :type cost_paths: bool
             :param overcounting: activate overcounting
             :type overcounting: bool
+            :param edge_classification: use segmentation as an edge classification
+            :type edge_classification: bool
             :return: ("cv": optimize cost volume, "cv_min": cost paths)
             :rtype: dict
         )pbdoc"
