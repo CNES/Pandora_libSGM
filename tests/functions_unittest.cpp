@@ -38,6 +38,7 @@ TEST(sgmTest, TestMiddleValueInvalid)
 
   bool overcounting = false;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<uint16_t> cvs;
   uint8_t cv_in[27] = {1, 15, 20, 14, 16, 6, 8, 19, 8, 13, 11, 3, 57, 57, 57, 16, 4, 12, 18, 2, 17, 23, 7, 1, 5, 20, 14};
@@ -50,7 +51,7 @@ TEST(sgmTest, TestMiddleValueInvalid)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   EXPECT_EQ(456, cvs.cost_volume[13]);
 }
@@ -71,6 +72,7 @@ TEST(sgmTest, TestMiddleValueInvalidOvercounting)
 
   bool overcounting = true;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<uint16_t> cvs;
   uint8_t cv_in[27] = {1, 15, 20, 14, 16, 6, 8, 19, 8, 13, 11, 3, 57, 57, 57, 16, 4, 12, 18, 2, 17, 23, 7, 1, 5, 20, 14};
@@ -83,7 +85,7 @@ TEST(sgmTest, TestMiddleValueInvalidOvercounting)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   EXPECT_EQ(57, cvs.cost_volume[13]);
 }
@@ -107,6 +109,7 @@ TEST(sgmTest, TestMiddleValue_cost_paths)
 
   bool overcounting = false;
   bool cost_paths = true;
+  bool edge_classification = false;
 
   // method : constant
   uint8_t p1[9 * 8] = {P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1};
@@ -116,7 +119,7 @@ TEST(sgmTest, TestMiddleValue_cost_paths)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   EXPECT_EQ(142, cvs.cost_volume[13]);
   EXPECT_EQ(2, cvs.cost_volume_min[32]);
@@ -137,6 +140,7 @@ TEST(sgmTest, TestMiddleValue)
   invalid_value = 57;
   bool overcounting = false;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<uint16_t> cvs;
   uint8_t cv_in[27] = {1, 15, 20, 14, 16, 6, 8, 19, 8, 13, 11, 3, 22, 12, 9, 16, 4, 12, 18, 2, 17, 23, 7, 1, 5, 20, 14};
@@ -149,7 +153,7 @@ TEST(sgmTest, TestMiddleValue)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
 
   EXPECT_EQ(142, cvs.cost_volume[13]);
 }
@@ -169,6 +173,7 @@ TEST(sgmTest, TestMiddleValueResetHistory)
   invalid_value = 57;
   bool overcounting = false;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<uint16_t> cvs;
   uint8_t cv_in[27] = {1, 15, 20, 14, 16, 6, 8, 19, 8, 13, 11, 3, 22, 12, 9, 16, 4, 12, 18, 2, 17, 23, 7, 1, 5, 20, 14};
@@ -181,7 +186,7 @@ TEST(sgmTest, TestMiddleValueResetHistory)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 2, 1, 1, 1, 1}; // piecewise optimization at the middle
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
 
   EXPECT_EQ(8 * cv_in[13], cvs.cost_volume[13]);
 }
@@ -200,6 +205,7 @@ TEST(sgmTest, TestMiddleValueOvercounting)
   invalid_value = 57;
   bool overcounting = true;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<uint16_t> cvs;
   uint8_t cv_in[27] = {1, 15, 20, 14, 16, 6, 8, 19, 8, 13, 11, 3, 22, 12, 9, 16, 4, 12, 18, 2, 17, 23, 7, 1, 5, 20, 14};
@@ -212,7 +218,7 @@ TEST(sgmTest, TestMiddleValueOvercounting)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<uint8_t, uint16_t>(cv_in, p1, p2, directions, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
 
   EXPECT_EQ(58, cvs.cost_volume[13]);
 }
@@ -231,6 +237,7 @@ TEST(aggregatedCostFromTopLeft0Test, borderValue)
   uint8_t P2 = 32;
   uint8_t invalid_value = 57;
   Direction direction = {0, 1};
+  bool edge_classification = false;
 
   int row = 0;
   int col = 0;
@@ -247,7 +254,7 @@ TEST(aggregatedCostFromTopLeft0Test, borderValue)
   float reset0 = 1;      // doesn'nt matter, disp==0
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset0);
@@ -266,6 +273,8 @@ TEST(aggregatedCostFromTopLeft0Test, borderValueResetHistory)
   uint8_t invalid_value = 57;
   Direction direction = {0, 1};
 
+  bool edge_classification = false;
+
   int row = 0;
   int col = 0;
   int disp = 0;
@@ -281,7 +290,7 @@ TEST(aggregatedCostFromTopLeft0Test, borderValueResetHistory)
   float reset0 = 1;      // doesn't matter, disp==0 and not a workable pixel
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset0); // was not changed
@@ -299,6 +308,8 @@ TEST(aggregatedCostFromTopLeft0Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {0, 1};
   uint8_t invalid_value = 57;
+
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -318,7 +329,7 @@ TEST(aggregatedCostFromTopLeft0Test, findMinDisp)
   float reset0 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   // pixel_0 = min(14,28,20)
   EXPECT_EQ(14, min_disp0);
@@ -340,6 +351,8 @@ TEST(aggregatedCostFromTopLeft0Test, aggregation)
   Direction direction = {0, 1};
   uint8_t invalid_value = 57;
 
+  bool edge_classification = false;
+
   int row = 1;
   int col = 1;
   int disp = 1;
@@ -358,7 +371,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregation)
   float reset0 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(23, costAggr);
@@ -377,6 +390,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {0, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -396,7 +410,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationResetHistory_disp1)
   float reset0 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   // costAggr = 15 +  0 * min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -415,6 +429,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {0, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -434,7 +449,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationResetHistory_disp0)
   float reset0 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   // costAggr = 15 +  0 * min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -453,6 +468,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {0, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -472,7 +488,7 @@ TEST(aggregatedCostFromTopLeft0Test, aggregationAfterInvalidPoint)
   float reset0 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0);
+                                                P1, P2, direction, buff0, &min_disp0, &pixel_0, class0, buff_class0, reset0, edge_classification);
 
   // pixel_0 = min(14,28,20)
   EXPECT_EQ(57, min_disp0);
@@ -495,6 +511,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 0;
   int col = 0;
@@ -511,7 +528,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValue)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset1);
@@ -529,6 +546,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 0;
   int col = 0;
@@ -545,7 +563,7 @@ TEST(aggregatedCostFromTopLeft1Test, borderValueResetHistory)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset1); // unchanged
@@ -563,6 +581,7 @@ TEST(aggregatedCostFromTopLeft1Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -582,7 +601,7 @@ TEST(aggregatedCostFromTopLeft1Test, findMinDisp)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   EXPECT_EQ(17, min_disp1);
   EXPECT_EQ(15, costAggr);
@@ -601,6 +620,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -620,7 +640,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregation)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
@@ -639,6 +659,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -658,7 +679,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp1)
   float reset1 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
@@ -677,6 +698,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -696,7 +718,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationResetHistory_disp0)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
@@ -715,6 +737,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -734,7 +757,7 @@ TEST(aggregatedCostFromTopLeft1Test, aggregationAfterInvalidPoint)
   float reset1 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1);
+                                                P1, P2, direction, buff1, &min_disp1, &pixel_1, class1, buff_class1, reset1, edge_classification);
 
   EXPECT_EQ(57, min_disp1);
   EXPECT_EQ(15, costAggr);
@@ -755,6 +778,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 0;
   int col = 0;
@@ -772,7 +796,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValue)
   float reset2 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset2);
@@ -790,6 +814,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 0;
   int col = 0;
@@ -807,7 +832,7 @@ TEST(aggregatedCostFromTopLeft2Test, borderValueResetHistory)
   float reset2 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset2); // unchanged
@@ -825,6 +850,7 @@ TEST(aggregatedCostFromTopLeft2Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -845,7 +871,7 @@ TEST(aggregatedCostFromTopLeft2Test, findMinDisp)
   float reset2 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   EXPECT_EQ(28, min_disp2);
   // costAggr = 15 + min(52 , 28+8,32+28) - 28
@@ -865,6 +891,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -886,7 +913,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregation)
   float reset2 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
@@ -905,6 +932,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -926,7 +954,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp1)
   float reset2 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
@@ -945,6 +973,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -966,7 +995,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationResetHistory_disp0)
   float reset2 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
@@ -985,6 +1014,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 1;
@@ -1005,7 +1035,7 @@ TEST(aggregatedCostFromTopLeft2Test, aggregationAfterInvalidPoint)
   float reset2 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2);
+                                                P1, P2, direction, buff2, buff_disp_2, &min_disp2, &pixel_2, class2, buff_class2, reset2, edge_classification);
 
   EXPECT_EQ(57, min_disp2);
   // costAggr = 15 + min(52 , 28+8,32+28) - 28
@@ -1026,6 +1056,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 4;
@@ -1042,7 +1073,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValue)
   float reset3 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset3);
@@ -1059,6 +1090,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 4;
@@ -1075,7 +1107,7 @@ TEST(aggregatedCostFromTopLeft3Test, borderValueResetHistory)
   float reset3 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset3); // unchanged
@@ -1092,6 +1124,7 @@ TEST(aggregatedCostFromTopLeft3Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 3;
@@ -1111,7 +1144,7 @@ TEST(aggregatedCostFromTopLeft3Test, findMinDisp)
   float reset3 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   // pixel_0 = min(14,28,20)
   EXPECT_EQ(14, min_disp3);
@@ -1131,6 +1164,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 3;
@@ -1150,7 +1184,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregation)
   float reset3 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(23, costAggr);
@@ -1168,6 +1202,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 3;
@@ -1187,7 +1222,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp1)
   float reset3 = 0;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -1205,6 +1240,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 3;
@@ -1224,7 +1260,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationResetHistory_disp0)
   float reset3 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -1242,6 +1278,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 1;
   int col = 3;
@@ -1261,7 +1298,7 @@ TEST(aggregatedCostFromTopLeft3Test, aggregationAfterInvalidPoint)
   float reset3 = 1;
 
   uint8_t costAggr = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3);
+                                                P1, P2, direction, buff3, &min_disp3, class3, buff_class3, reset3, edge_classification);
 
   EXPECT_EQ(57, min_disp3);
   EXPECT_EQ(15, costAggr);
@@ -1282,6 +1319,7 @@ TEST(aggregatedCostFromBottomRight4Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1298,7 +1336,7 @@ TEST(aggregatedCostFromBottomRight4Test, borderValue)
   float reset4 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset4);
@@ -1316,6 +1354,7 @@ TEST(aggregatedCostFromBottomRight4Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1332,7 +1371,7 @@ TEST(aggregatedCostFromBottomRight4Test, borderValueResetHistory)
   float reset4 = 1;      // doesnt matter, disp ==0
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset4); // was not changed
@@ -1350,6 +1389,7 @@ TEST(aggregatedCostFromBottomRight4Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1369,7 +1409,7 @@ TEST(aggregatedCostFromBottomRight4Test, findMinDisp)
   float reset4 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   // pixel_0 = min(14,28,20)
   EXPECT_EQ(14, min_disp4);
@@ -1390,6 +1430,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1409,7 +1450,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregation)
   float reset4 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(23, costAggr);
@@ -1428,6 +1469,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1447,7 +1489,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationResetHistory_disp1)
   float reset4 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   // costAggr = 15 + 0 * min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -1466,6 +1508,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1485,7 +1528,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationResetHistory_disp0)
   float reset4 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   // costAggr = 15 + 0 * min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(15, costAggr);
@@ -1504,6 +1547,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {0, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1523,7 +1567,7 @@ TEST(aggregatedCostFromBottomRight4Test, aggregationAfterInvalidPoint)
   float reset4 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4);
+                                                    P1, P2, direction, buff4, &min_disp4, &pixel_4, class4, buff_class4, reset4, edge_classification);
 
   EXPECT_EQ(57, min_disp4);
   EXPECT_EQ(15, costAggr);
@@ -1544,6 +1588,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1560,7 +1605,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValue)
   float reset5 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset5);
@@ -1578,6 +1623,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1594,7 +1640,7 @@ TEST(aggregatedCostFromBottomRight5Test, borderValueResetHistory)
   float reset5 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset5); // unchanged
@@ -1612,6 +1658,7 @@ TEST(aggregatedCostFromBottomRight5Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1631,7 +1678,7 @@ TEST(aggregatedCostFromBottomRight5Test, findMinDisp)
   float reset5 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
 
   EXPECT_EQ(17, min_disp5);
   EXPECT_EQ(15, costAggr);
@@ -1650,6 +1697,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1669,7 +1717,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregation)
   float reset5 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset5);
@@ -1687,6 +1735,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1706,7 +1755,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp1)
   float reset5 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset5);
@@ -1724,6 +1773,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1743,7 +1793,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationResetHistory_disp0)
   float reset5 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -26
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset5);
@@ -1761,6 +1811,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {-1, 0};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1780,7 +1831,7 @@ TEST(aggregatedCostFromBottomRight5Test, aggregationAfterInvalidPoint)
   float reset5 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5);
+                                                    P1, P2, direction, buff5, &min_disp5, &pixel_5, class5, buff_class5, reset5, edge_classification);
 
   EXPECT_EQ(57, min_disp5);
   EXPECT_EQ(15, costAggr);
@@ -1801,6 +1852,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1818,7 +1870,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValue)
   float reset6 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset6);
@@ -1836,6 +1888,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 4;
@@ -1853,7 +1906,7 @@ TEST(aggregatedCostFromBottomRight6Test, borderValueResetHistory)
   float reset6 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset6); // unchanged
@@ -1871,6 +1924,7 @@ TEST(aggregatedCostFromBottomRight6Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1891,7 +1945,7 @@ TEST(aggregatedCostFromBottomRight6Test, findMinDisp)
   float reset6 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   EXPECT_EQ(28, min_disp6);
   // costAggr = 15 + min(52 , 28+8,32+28) - 28
@@ -1911,6 +1965,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1932,7 +1987,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregation)
   float reset6 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
@@ -1951,6 +2006,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -1972,7 +2028,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp1)
   float reset6 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
@@ -1991,6 +2047,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -2012,7 +2069,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationResetHistory_disp0)
   float reset6 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   // costAggr = 15 + min(30+8 , 28 , 32+8 , 28+32) -28
   EXPECT_EQ(15, costAggr);
@@ -2031,6 +2088,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {-1, -1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 3;
@@ -2051,7 +2109,7 @@ TEST(aggregatedCostFromBottomRight6Test, aggregationAfterInvalidPoint)
   float reset6 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6);
+                                                    P1, P2, direction, buff6, buff_disp_6, &min_disp6, &pixel_6, class6, buff_class6, reset6, edge_classification);
 
   EXPECT_EQ(57, min_disp6);
   EXPECT_EQ(15, costAggr);
@@ -2071,6 +2129,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValue)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 0;
@@ -2087,7 +2146,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValue)
   float reset7 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(1, reset7);
@@ -2104,6 +2163,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValueResetHistory)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 4;
   int col = 0;
@@ -2120,7 +2180,7 @@ TEST(aggregatedCostFromBottomRight7Test, borderValueResetHistory)
   float reset7 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   EXPECT_EQ(15, costAggr);
   EXPECT_EQ(0, reset7); // unchanged
@@ -2137,6 +2197,7 @@ TEST(aggregatedCostFromBottomRight7Test, findMinDisp)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 1;
@@ -2156,7 +2217,7 @@ TEST(aggregatedCostFromBottomRight7Test, findMinDisp)
   float reset7 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
   // pixel_0 = min(14,28,20)
   EXPECT_EQ(14, min_disp7);
   // costAggr = 15 + min(14 , 28 + 8 , 14 + 32) - 14 = 15
@@ -2175,6 +2236,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregation)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 1;
@@ -2194,7 +2256,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregation)
   float reset7 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   // costAggr = 15 + min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15+22-14 = 23
   EXPECT_EQ(23, costAggr);
@@ -2212,6 +2274,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp1)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 1;
@@ -2231,7 +2294,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp1)
   float reset7 = 0;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   // costAggr = 15 +  0 * min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15
   EXPECT_EQ(15, costAggr);
@@ -2249,6 +2312,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp0)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 1;
@@ -2268,7 +2332,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationResetHistory_disp0)
   float reset7 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   // costAggr = 15 + 0 *  min ( 14+8 , 28 , 20 + 8 , 14+32) - 14 = 15
   EXPECT_EQ(15, costAggr);
@@ -2286,6 +2350,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationAfterInvalidPoint)
   uint8_t P2 = 32;
   Direction direction = {-1, 1};
   uint8_t invalid_value = 57;
+  bool edge_classification = false;
 
   int row = 3;
   int col = 1;
@@ -2305,7 +2370,7 @@ TEST(aggregatedCostFromBottomRight7Test, aggregationAfterInvalidPoint)
   float reset7 = 1;
 
   uint8_t costAggr = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows, nb_cols, nb_disps,
-                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7);
+                                                    P1, P2, direction, buff7, &min_disp7, class7, buff_class7, reset7, edge_classification);
 
   EXPECT_EQ(57, min_disp7);
   EXPECT_EQ(15, costAggr);
@@ -2329,6 +2394,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalid)
 
   bool overcounting = false;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<float> cvs;
   float cv_in[27] = {1, 0.5, 0.3, -0.2, 0.4, 0.1, -0.8, 0.6, 0.2, -0.3, -0.7, 0.4, 5.0, 5.0, 5.0, 0.4, 0.4, -0.1, -0.8, 0.7, -0.6, 0.1, -0.1, 0.1, 0.5, 0.2, 0.4};
@@ -2340,7 +2406,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalid)
 
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   EXPECT_FLOAT_EQ(40.0, cvs.cost_volume[13]);
 }
@@ -2362,6 +2428,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting)
 
   bool overcounting = true;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   CostVolumes<float> cvs;
   float cv_in[27] = {1, 0.5, 0.3, -0.2, 0.4, 0.1, -0.8, 0.6, 0.2, -0.3, -0.7, 0.4, 5.0, 5.0, 5.0, 0.4, 0.4, -0.1, -0.8, 0.7, -0.6, 0.1, -0.1, 0.1, 0.5, 0.2, 0.4};
@@ -2374,7 +2441,7 @@ TEST(sgmTestFloat, TestMiddleValueInvalidOvercounting)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   EXPECT_FLOAT_EQ(5.0, cvs.cost_volume[13]);
 }
@@ -2398,6 +2465,7 @@ TEST(sgmTestFloat, TestMiddleValue)
 
   bool overcounting = false;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   // method : constant
   float p1[9 * 8] = {P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1};
@@ -2407,7 +2475,7 @@ TEST(sgmTestFloat, TestMiddleValue)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   //  L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
   //  L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
@@ -2440,6 +2508,7 @@ TEST(sgmTestFloat, TestMiddleValueOvercounting)
 
   bool overcounting = true;
   bool cost_paths = false;
+  bool edge_classification = false;
 
   // method : constant
   float p1[9 * 8] = {P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1};
@@ -2449,7 +2518,7 @@ TEST(sgmTestFloat, TestMiddleValueOvercounting)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<float, float>(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<float, float>(cv_in, p1, p2, penalties, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   //  L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
   //  L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
@@ -2482,6 +2551,7 @@ TEST(sgmTestFloat, TestMiddleValueCostPaths)
 
   bool overcounting = false;
   bool cost_paths = true;
+  bool edge_classification = false;
 
   // method : constant
   float p1[9 * 8] = {P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1};
@@ -2491,7 +2561,7 @@ TEST(sgmTestFloat, TestMiddleValueCostPaths)
   // segmentation
   float segmentation[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // no piecewise optimization
 
-  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting);
+  cvs = sgm<float, float>(cv_in, p1, p2, direction, nb_row, nb_col, nb_disp, invalid_value, segmentation, cost_paths, overcounting, edge_classification);
   // middle point must stay invalid, equal to invalid value
   //  L0 = -0.7 + min(-0.7 ; -0.3+1; 0,4+1) - (-0.7) = - 0.7
   //  L1 = -0.7 + min(0.4 ; -0.2+1; 0.1+1) - (-0.2) = - 0.1
