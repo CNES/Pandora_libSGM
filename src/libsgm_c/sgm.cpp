@@ -767,6 +767,8 @@ void assignDirections(int *directions_in, Direction *dirs)
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
 template CostVolumes<uint16_t> sgm<uint8_t, uint16_t>(uint8_t *cv_in, uint8_t *p1_in, uint8_t *p2_in, int *directions_in, unsigned long int nb_rows,
-                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation, bool cost_paths, bool overcounting, bool edge_classification);
+                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation,
+                                                      bool cost_paths, bool overcounting, bool edge_classification);
 template CostVolumes<float> sgm<float, float>(float *cv_in, float *p1_in, float *p2_in, int *directions_in, unsigned long int nb_rows,
-                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation, bool cost_paths, bool overcounting, bool edge_classification);
+                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation,
+                                              bool cost_paths, bool overcounting, bool edge_classification);
