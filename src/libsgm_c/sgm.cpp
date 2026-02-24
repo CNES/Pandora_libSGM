@@ -29,7 +29,7 @@
 
 template <typename T, typename Tout>
 CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
-                      unsigned int nb_disps, T invalid_value, float *segmentation, bool cost_paths, bool overcounting)
+                      unsigned int nb_disps, T invalid_value, float *segmentation, bool cost_paths, bool overcounting, bool edge_classification)
 
 {
   int nb_dir = 8;
@@ -131,22 +131,22 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
         // left-> right
         s0 = aggregatedCostFromTopLeft0(pixelCost, row, col, disp, invalid_value, nb_rows,
                                         nb_cols, nb_disps, penalty[0].P1, penalty[0].P2, direction[0], buff0, &min_disp0,
-                                        &pixel_0, current_class, buff_class0, reset0);
+                                        &pixel_0, current_class, buff_class0, reset0, edge_classification);
         costAggr += s0;
         // up -> down
         s1 = aggregatedCostFromTopLeft1(pixelCost, row, col, disp, invalid_value, nb_rows,
                                         nb_cols, nb_disps, penalty[1].P1, penalty[1].P2, direction[1], buff1, &min_disp1,
-                                        &pixel_1, current_class, buff_class1_2_3, reset1);
+                                        &pixel_1, current_class, buff_class1_2_3, reset1, edge_classification);
         costAggr += s1;
         // diagonal from top left
         s2 = aggregatedCostFromTopLeft2(pixelCost, row, col, disp, invalid_value, nb_rows,
                                         nb_cols, nb_disps, penalty[2].P1, penalty[2].P2, direction[2], buff2, buff_disp_2,
-                                        &min_disp2, &pixel_2, current_class, buff_class1_2_3, reset2);
+                                        &min_disp2, &pixel_2, current_class, buff_class1_2_3, reset2, edge_classification);
         costAggr += s2;
         // diagonal from top right
         s3 = aggregatedCostFromTopLeft3(pixelCost, row, col, disp, invalid_value, nb_rows,
                                         nb_cols, nb_disps, penalty[3].P1, penalty[3].P2, direction[3], buff3, &min_disp3,
-                                        current_class, buff_class1_2_3, reset3);
+                                        current_class, buff_class1_2_3, reset3, edge_classification);
         costAggr += s3;
 
         cvs.cost_volume[disp + col * nb_disps + row * nb_disps * nb_cols] += costAggr;
@@ -255,22 +255,22 @@ CostVolumes<Tout> sgm(T *cv_in, T *p1_in, T *p2_in, int *directions_in, unsigned
         // right->left
         s4 = aggregatedCostFromBottomRight4(pixelCost, row, col, disp, invalid_value, nb_rows,
                                             nb_cols, nb_disps, penalty[4].P1, penalty[4].P2, direction[4], buff4, &min_disp4, &pixel_4,
-                                            current_class, buff_class4, reset4);
+                                            current_class, buff_class4, reset4, edge_classification);
         costAggr += s4;
         // up -> down
         s5 = aggregatedCostFromBottomRight5(pixelCost, row, col, disp, invalid_value, nb_rows,
                                             nb_cols, nb_disps, penalty[5].P1, penalty[5].P2, direction[5], buff5, &min_disp5, &pixel_5,
-                                            current_class, buff_class5_6_7, reset5);
+                                            current_class, buff_class5_6_7, reset5, edge_classification);
         costAggr += s5;
         // diagonal from lower left
         s6 = aggregatedCostFromBottomRight6(pixelCost, row, col, disp, invalid_value, nb_rows,
                                             nb_cols, nb_disps, penalty[6].P1, penalty[6].P2, direction[6], buff6, buff_disp_6, &min_disp6,
-                                            &pixel_6, current_class, buff_class5_6_7, reset6);
+                                            &pixel_6, current_class, buff_class5_6_7, reset6, edge_classification);
         costAggr += s6;
         // diagonal from lower right
         s7 = aggregatedCostFromBottomRight7(pixelCost, row, col, disp, invalid_value, nb_rows,
                                             nb_cols, nb_disps, penalty[7].P1, penalty[7].P2, direction[7], buff7, &min_disp7, current_class,
-                                            buff_class5_6_7, reset7);
+                                            buff_class5_6_7, reset7, edge_classification);
         costAggr += s7;
 
         cvs.cost_volume[disp + col * nb_disps + row * nb_disps * nb_cols] += costAggr;
@@ -327,7 +327,7 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
 template <typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
                              int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff0, T *min_disp0, T *pixel_0, float current_class, float buff_class0, float &reset0)
+                             T *buff0, T *min_disp0, T *pixel_0, float current_class, float buff_class0, float &reset0, bool edge_classification)
 {
 
   // Pixel cost at the point (row,col,disp)
@@ -345,8 +345,13 @@ T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_
     if (disp == 0)
     {
       *min_disp0 = *std::min_element(&buff0[disp], &buff0[nb_disps]);
-      // if classes are different, reset history (reset == 0)
-      reset0 = static_cast<float>(current_class == buff_class0);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset0 = static_cast<float>(!(buff_class0 > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset0 = static_cast<float>(current_class == buff_class0);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -377,7 +382,7 @@ T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_
 template <typename T>
 T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_value,
                              int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff1, T *min_disp1, T *pixel_1, float current_class, float *buff_class1, float &reset1)
+                             T *buff1, T *min_disp1, T *pixel_1, float current_class, float *buff_class1, float &reset1, bool edge_classification)
 {
   /* ------------------*/
   /* --  Up->Down   -- */
@@ -392,8 +397,14 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
     if (disp == 0)
     {
       *min_disp1 = *std::min_element(&buff1[disp + col * nb_disps], &buff1[nb_disps + col * nb_disps]);
-      // if classes are different, reset history
-      reset1 = static_cast<float>(current_class == buff_class1[col - direction.dcol]);
+
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset1 = static_cast<float>(!(buff_class1[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset1 = static_cast<float>(current_class == buff_class1[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -423,7 +434,7 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
 template <typename T>
 T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_value,
                              int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff2, T *buff_disp_2, T *min_disp2, T *pixel_2, float current_class, float *buff_class2, float &reset2)
+                             T *buff2, T *buff_disp_2, T *min_disp2, T *pixel_2, float current_class, float *buff_class2, float &reset2, bool edge_classification)
 {
 
   /* -----------------------------*/
@@ -439,8 +450,14 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
     if (disp == 0)
     {
       *min_disp2 = *std::min_element(&buff_disp_2[disp], &buff_disp_2[nb_disps]);
-      // if classes are different, reset history
-      reset2 = static_cast<float>(current_class == buff_class2[col - direction.dcol]);
+      
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset2 = static_cast<float>(!(buff_class2[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset2 = static_cast<float>(current_class == buff_class2[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -472,7 +489,7 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
 template <typename T>
 T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_value,
                              int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                             T *buff3, T *min_disp3, float current_class, float *buff_class3, float &reset3)
+                             T *buff3, T *min_disp3, float current_class, float *buff_class3, float &reset3, bool edge_classification)
 {
   /* -----------------------------*/
   /* --Diagonal from upper right-- */
@@ -488,7 +505,13 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
     {
       *min_disp3 = *std::min_element(&buff3[disp + (col - direction.dcol) * nb_disps], &buff3[nb_disps + (col - direction.dcol) * nb_disps]);
       // if classes are different, reset history
-      reset3 = static_cast<float>(current_class == buff_class3[col - direction.dcol]);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset3 = static_cast<float>(!(buff_class3[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset3 = static_cast<float>(current_class == buff_class3[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -516,7 +539,7 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
 template <typename T>
 T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T invalid_value,
                                  int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff4, T *min_disp4, T *pixel_4, float current_class, float buff_class4, float &reset4)
+                                 T *buff4, T *min_disp4, T *pixel_4, float current_class, float buff_class4, float &reset4, bool edge_classification)
 {
 
   /* ------------------*/
@@ -533,7 +556,13 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
     {
       *min_disp4 = *std::min_element(&buff4[disp], &buff4[nb_disps]);
       // if classes are different, reset history
-      reset4 = static_cast<float>(current_class == buff_class4);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset4 = static_cast<float>(!(buff_class4 > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset4 = static_cast<float>(current_class == buff_class4);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -563,7 +592,7 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
 template <typename T>
 T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T invalid_value,
                                  int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff5, T *min_disp5, T *pixel_5, float current_class, float *buff_class5, float &reset5)
+                                 T *buff5, T *min_disp5, T *pixel_5, float current_class, float *buff_class5, float &reset5, bool edge_classification)
 {
 
   /* ------------------*/
@@ -580,7 +609,13 @@ T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T inva
     {
       *min_disp5 = *std::min_element(&buff5[disp + col * nb_disps], &buff5[nb_disps + col * nb_disps]);
       // if classes are different, reset history
-      reset5 = static_cast<float>(current_class == buff_class5[col - direction.dcol]);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset5 = static_cast<float>(!(buff_class5[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset5 = static_cast<float>(current_class == buff_class5[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -610,7 +645,7 @@ T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T inva
 template <typename T>
 T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T invalid_value,
                                  int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff6, T *buff_disp_6, T *min_disp6, T *pixel_6, float current_class, float *buff_class6, float &reset6)
+                                 T *buff6, T *buff_disp_6, T *min_disp6, T *pixel_6, float current_class, float *buff_class6, float &reset6, bool edge_classification)
 {
 
   /* -----------------------------*/
@@ -628,7 +663,13 @@ T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T inva
     {
       *min_disp6 = *std::min_element(&buff_disp_6[disp], &buff_disp_6[nb_disps]);
       // if classes are different, reset history
-      reset6 = static_cast<float>(current_class == buff_class6[col - direction.dcol]);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset6 = static_cast<float>(!(buff_class6[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset6 = static_cast<float>(current_class == buff_class6[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -660,7 +701,7 @@ T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T inva
 template <typename T>
 T aggregatedCostFromBottomRight7(T pixelCost, int row, int col, int disp, T invalid_value,
                                  int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-                                 T *buff7, T *min_disp7, float current_class, float *buff_class7, float &reset7)
+                                 T *buff7, T *min_disp7, float current_class, float *buff_class7, float &reset7, bool edge_classification)
 {
 
   /* ------------------------------*/
@@ -677,7 +718,13 @@ T aggregatedCostFromBottomRight7(T pixelCost, int row, int col, int disp, T inva
     {
       *min_disp7 = *std::min_element(&buff7[disp + (col - direction.dcol) * nb_disps], &buff7[nb_disps + (col - direction.dcol) * nb_disps]);
       // if classes are different, reset history
-      reset7 = static_cast<float>(current_class == buff_class7[col - direction.dcol]);
+      if (edge_classification) {
+        // if pixel is an edge, reset history
+        reset7 = static_cast<float>(!(buff_class7[col - direction.dcol] > 0.f));
+      } else {
+        // if classes are different, reset history (reset == 0)
+        reset7 = static_cast<float>(current_class == buff_class7[col - direction.dcol]);
+      }
     }
     /*If pixelCost is equal to invalid value, aggregated cost must be equal to invalid value.
     So, it's useless to compute the minimum on tmp1,tmp2,tmp3,tmp4
@@ -720,6 +767,8 @@ void assignDirections(int *directions_in, Direction *dirs)
 
 /* Explicitly instantiate all the templates needed to use libSGM as an external lib */
 template CostVolumes<uint16_t> sgm<uint8_t, uint16_t>(uint8_t *cv_in, uint8_t *p1_in, uint8_t *p2_in, int *directions_in, unsigned long int nb_rows,
-                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation, bool cost_paths, bool overcounting);
+                                                      unsigned long int nb_cols, unsigned int nb_disps, uint8_t invalid_value, float *segmentation,
+                                                      bool cost_paths, bool overcounting, bool edge_classification);
 template CostVolumes<float> sgm<float, float>(float *cv_in, float *p1_in, float *p2_in, int *directions_in, unsigned long int nb_rows,
-                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation, bool cost_paths, bool overcounting);
+                                              unsigned long int nb_cols, unsigned int nb_disps, float invalid_value, float *segmentation,
+                                              bool cost_paths, bool overcounting, bool edge_classification);
