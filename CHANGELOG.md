@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.2a1 (March 2026)
+
+### Added
+
+- Added CI on Gitlab.
+
+### Changed
+
+- Updated classification with edge map.
+
+
 ## 0.5.1 (February 2025)
 
 ### Changed
