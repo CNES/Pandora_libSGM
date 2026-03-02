@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Centre National d'Etudes Spatiales (CNES).
+// Copyright (C) 2026 Centre National d'Etudes Spatiales (CNES).
 //
 // This file is part of cars-filter
 //
