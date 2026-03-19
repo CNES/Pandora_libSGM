@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf8
 #
-# Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
+# Copyright (c) 2026 Centre National d'Etudes Spatiales (CNES).
 #
 # This file is part of LIBSGM
 #
@@ -30,13 +30,7 @@ from setuptools import setup
 
 try:
     ext_modules = [
-        Pybind11Extension(
-            "c_libsgm",
-            [
-                "src/libsgm_c/sgm_wrapper.cpp"
-            ],
-            extra_compile_args=["-O3"]
-        ),
+        Pybind11Extension("c_libsgm", ["src/libsgm_c/sgm_wrapper.cpp"], extra_compile_args=["-O3"]),
     ]
 
     setup(

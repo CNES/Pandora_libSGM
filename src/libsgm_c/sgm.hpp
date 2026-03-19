@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
+ * Copyright (c) 2026 Centre National d'Etudes Spatiales (CNES).
  *
  * This file is part of LIBSGM
  *
@@ -70,7 +70,7 @@ struct Penalty{
 
 template<typename T , typename Tout>
 CostVolumes<Tout> sgm(T * cv_in, T* p1_in, T* p2_in, int* directions_in, unsigned long int nb_rows, unsigned long int nb_cols,
- unsigned int nb_disps, T invalid_value, float* segmentation, bool cost_paths, bool overcounting);
+ unsigned int nb_disps, T invalid_value, float* segmentation, bool cost_paths, bool overcounting, bool edge_classification);
 
 /*!
  *  Update minimum
@@ -112,7 +112,7 @@ std::pair<float, int> update_minimum(float current_min, float value, int current
 template<typename T>
 T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff0, T * min_disp0, T * pixel_0, float current_class, float buff_class0, float & reset0);
+    T * buff0, T * min_disp0, T * pixel_0, float current_class, float buff_class0, float & reset0, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -142,7 +142,7 @@ T aggregatedCostFromTopLeft0(T pixelCost, int row, int col, int disp, T invalid_
 template<typename T> 
 T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff1, T * min_disp1, T * pixel_1, float current_class, float * buff_class1, float & reset1);
+    T * buff1, T * min_disp1, T * pixel_1, float current_class, float * buff_class1, float & reset1, bool edge_classification);
 /*!
  *  \brief  Compute aggregated cost volume
  *   Compute aggregated cost at one point
@@ -172,7 +172,7 @@ T aggregatedCostFromTopLeft1(T pixelCost, int row, int col, int disp, T invalid_
 template<typename T> 
 T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff2, T * buff_disp_2, T * min_disp2, T * pixel_2, float current_class, float * buff_class2, float & reset2);
+    T * buff2, T * buff_disp_2, T * min_disp2, T * pixel_2, float current_class, float * buff_class2, float & reset2, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -201,7 +201,7 @@ T aggregatedCostFromTopLeft2(T pixelCost, int row, int col, int disp, T invalid_
 template<typename T> 
 T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff3, T * min_disp3, float current_class, float * buff_class3, float & reset3);
+    T * buff3, T * min_disp3, float current_class, float * buff_class3, float & reset3, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -231,7 +231,7 @@ T aggregatedCostFromTopLeft3(T pixelCost, int row, int col, int disp, T invalid_
 template<typename T> 
 T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff4, T * min_disp4, T * pixel_4, float current_class, float buff_class4, float & reset4);
+    T * buff4, T * min_disp4, T * pixel_4, float current_class, float buff_class4, float & reset4, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -261,7 +261,7 @@ T aggregatedCostFromBottomRight4(T pixelCost, int row, int col, int disp, T inva
 template<typename T> 
 T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff5, T * min_disp5, T * pixel_5, float current_class, float * buff_class5, float & reset5);
+    T * buff5, T * min_disp5, T * pixel_5, float current_class, float * buff_class5, float & reset5, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -292,7 +292,7 @@ T aggregatedCostFromBottomRight5(T pixelCost, int row, int col, int disp, T inva
 template<typename T>
 T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,
-    T * buff6, T * buff_disp_6, T * min_disp6, T * pixel_6, float current_class, float * buff_class6, float & reset6);
+    T * buff6, T * buff_disp_6, T * min_disp6, T * pixel_6, float current_class, float * buff_class6, float & reset6, bool edge_classification);
 
 /*!
  *  \brief  Compute aggregated cost volume
@@ -321,7 +321,7 @@ T aggregatedCostFromBottomRight6(T pixelCost, int row, int col, int disp, T inva
 template<typename T>
 T aggregatedCostFromBottomRight7(T pixelCost, int row, int col, int disp, T invalid_value,
     int nb_rows, int nb_cols, int nb_disps, T P1, T P2, Direction direction,T * buff7, T * min_disp7,
-    float current_class, float * buff_class7, float & reset7);
+    float current_class, float * buff_class7, float & reset7, bool edge_classification);
 
 /*!
  *  \brief  Apply penalties

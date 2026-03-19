@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf8
 #
-# Copyright (c) 2024 Centre National d'Etudes Spatiales (CNES).
+# Copyright (c) 2026 Centre National d'Etudes Spatiales (CNES).
 #
 # This file is part of LIBSGM
 #
@@ -147,7 +147,6 @@ def compute_costs(  # pylint: disable=R0917
         j = j_0 + d_j
 
         while 0 <= i < in_shape[0] and 0 <= j < in_shape[1]:
-
             current_lr = cv_in[i, j, :].copy()
             current_segm = segmentation[i, j]
 
