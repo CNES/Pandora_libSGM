@@ -63,7 +63,7 @@ variables:
 # Default configuration for all jobs
 default:
   tags:
-    - Usine_Logicielle
+    - Usine_Logicielle_Podman
   timeout: 30 minutes
 
 # Override to restrict scope of PIP_OPT redefinition
