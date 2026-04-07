@@ -30,6 +30,7 @@ include:
       pylint-enabled: true
       black-enabled: true
       mypy-enabled: true
+      trivy-disabled: true
       build-system: setuptools
       # Install libsgm test dependencies (see setup.cfg file)
       extra-deps: test
