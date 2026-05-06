@@ -23,6 +23,7 @@
 """
 This module contains functions to execute python SGM library.
 """
+
 import copy
 from typing import List, Tuple
 
@@ -154,7 +155,7 @@ class LrManager:
         :return: previous partial cost lr
         :rtype: np.ndarray
         """
-        return self.previous_lr[num_plane]  # type:ignore
+        return self.previous_lr[num_plane]  # type: ignore
 
     def set_current_segm(self, segm_s: list) -> None:
         """
@@ -174,4 +175,4 @@ class LrManager:
         :return: previous partial segmentation
         :rtype: np.ndarray
         """
-        return self.previous_segm[num_plane]  # type:ignore
+        return self.previous_segm[num_plane]  # type: ignore

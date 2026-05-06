@@ -66,7 +66,7 @@ def run_sgm_parall(  # pylint: disable=R0917
     starting_points = []
     for idx, dir_ in enumerate(directions):
         # optimize this direction
-        lr_manager = LrManager(cv_in.shape, dir_)  # type: ignore
+        lr_manager = LrManager(cv_in.shape, dir_)
 
         for plane in lr_manager.planes_front:
             list_indexes = [
@@ -128,7 +128,7 @@ def compute_costs(  # pylint: disable=R0917
 
     cv_min = np.zeros((in_shape[0], in_shape[1], p1_in.shape[2]))
 
-    for idx in prange(starting_points.shape[0]):  # type:ignore #pylint:disable=not-an-iterable
+    for idx in prange(starting_points.shape[0]):  # type: ignore #pylint:disable=not-an-iterable
         point = starting_points[idx]
 
         d_i = point[2]

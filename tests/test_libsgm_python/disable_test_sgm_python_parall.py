@@ -22,6 +22,7 @@
 """
 This module contains tests for the sgm_python_parall code
 """
+
 import unittest
 
 import numpy as np
