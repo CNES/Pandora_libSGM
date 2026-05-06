@@ -59,7 +59,7 @@ export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 # Python global variables definition
-PYTHON_VERSION_MIN = 3.8
+PYTHON_VERSION_MIN = 3.10
 # Set PYTHON if not defined in command line
 # Example: PYTHON="python3.10" make venv to use python 3.10 for the venv
 # By default the default python3 of the system.
