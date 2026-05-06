@@ -128,7 +128,7 @@ def compute_costs(  # pylint: disable=R0917
 
     cv_min = np.zeros((in_shape[0], in_shape[1], p1_in.shape[2]))
 
-    for idx in prange(starting_points.shape[0]):  # type:ignore #pylint:disable=not-an-iterable
+    for idx in prange(starting_points.shape[0]):  # type: ignore #pylint:disable=not-an-iterable
         point = starting_points[idx]
 
         d_i = point[2]

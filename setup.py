@@ -24,7 +24,6 @@ This module contains the required libraries and softwares allowing to execute th
 and setup elements to configure and identify the software.
 """
 
-
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 

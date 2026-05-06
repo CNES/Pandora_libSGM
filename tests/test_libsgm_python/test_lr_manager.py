@@ -23,6 +23,7 @@
 """
 This module contains tests for the lr_manager code
 """
+
 import unittest
 
 import numpy as np
