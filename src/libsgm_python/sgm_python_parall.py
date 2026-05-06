@@ -66,7 +66,7 @@ def run_sgm_parall(  # pylint: disable=R0917
     starting_points = []
     for idx, dir_ in enumerate(directions):
         # optimize this direction
-        lr_manager = LrManager(cv_in.shape, dir_)  # type: ignore
+        lr_manager = LrManager(cv_in.shape, dir_)
 
         for plane in lr_manager.planes_front:
             list_indexes = [
